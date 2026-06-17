@@ -1,0 +1,513 @@
+/* Pretendard 웹폰트 (나중에 self-host 하려면 이 줄을 로컬 경로로 교체) */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css");
+
+:root {
+  --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", system-ui, sans-serif;
+  --app-max: 480px;
+  /* 테마에서 주입 (App.tsx) */
+  --text: #f4f6ff;
+  --sub-text: rgba(226, 231, 255, 0.62);
+  --card-bg: rgba(255, 255, 255, 0.06);
+  --card-border: rgba(255, 255, 255, 0.12);
+  --accent: #8ea2ff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font);
+  background: #07080f;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
+}
+
+#root {
+  min-height: 100dvh;
+  width: 100%;
+  background: #07080f;
+}
+
+/* ── 앱 컨테이너 (전체 화면 반응형) ───────────────────────── */
+.app {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  overflow: hidden;
+  color: var(--text);
+  isolation: isolate;
+}
+
+/* ── 하늘 배경 ──────────────────────────────────────────── */
+.sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  transition: background 1.2s ease;
+}
+.sky-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 0%, transparent 55%, rgba(0, 0, 0, 0.28) 100%);
+}
+.starfield {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.moon-wrap {
+  position: absolute;
+  filter: drop-shadow(0 0 24px rgba(248, 244, 224, 0.25));
+}
+
+/* 구름 */
+.clouds {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transition: opacity 1.2s ease;
+}
+.cloud-blob {
+  position: absolute;
+  left: 0;
+  filter: blur(18px);
+  border-radius: 50%;
+  animation-name: drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+@keyframes drift {
+  from {
+    transform: translateX(-55vw);
+  }
+  to {
+    transform: translateX(60vw);
+  }
+}
+
+/* ── 콘텐츠 ─────────────────────────────────────────────── */
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: max(env(safe-area-inset-top), 16px) clamp(16px, 4vw, 40px) 56px;
+  min-height: 100dvh;
+}
+
+/* 상단 바 */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 2px 2px;
+}
+.location-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  padding: 6px 4px;
+  opacity: 0.96;
+}
+.location-btn span {
+  max-width: 64vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.refresh-btn {
+  border: none;
+  background: var(--card-bg);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  opacity: 0.85;
+}
+.refresh-btn:active {
+  transform: rotate(60deg);
+  transition: transform 0.3s ease;
+}
+
+/* ── 히어로 ─────────────────────────────────────────────── */
+.hero {
+  text-align: center;
+  padding: 26px 0 22px;
+}
+.hero-eyebrow {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--sub-text);
+  margin-bottom: 2px;
+}
+.hero-score {
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  line-height: 1;
+}
+.hero-num {
+  font-size: clamp(96px, 32vw, 148px);
+  font-weight: 200;
+  letter-spacing: -0.045em;
+  color: var(--text);
+}
+.hero-percent {
+  font-size: clamp(34px, 9vw, 46px);
+  font-weight: 300;
+  margin-top: 0.5em;
+  margin-left: 2px;
+  color: var(--text);
+  opacity: 0.85;
+}
+.hero-verdict {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-top: 4px;
+}
+.hero-sub {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--sub-text);
+  margin-top: 5px;
+}
+.hero-gauge {
+  width: min(220px, 64%);
+  height: 6px;
+  margin: 16px auto 0;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+.hero-gauge-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.hero-note {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--sub-text);
+  margin-top: 10px;
+  opacity: 0.8;
+  letter-spacing: 0.01em;
+}
+
+/* ── 카드 공통 ──────────────────────────────────────────── */
+.card {
+  background: var(--card-bg);
+  -webkit-backdrop-filter: blur(22px) saturate(135%);
+  backdrop-filter: blur(22px) saturate(135%);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.14);
+}
+.card-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--sub-text);
+  text-transform: none;
+  padding: 15px 18px 0;
+}
+
+/* ── 예보 카드 ──────────────────────────────────────────── */
+.forecast-card {
+  margin-top: 8px;
+  padding-bottom: 8px;
+}
+.forecast-rows {
+  padding: 8px 16px 8px;
+}
+.forecast-row {
+  display: grid;
+  grid-template-columns: 34px 26px 1fr 44px;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.forecast-row:first-child {
+  border-top: none;
+}
+.forecast-day {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+.forecast-icon {
+  display: grid;
+  place-items: center;
+  color: var(--text);
+}
+.forecast-bar {
+  height: 7px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.13);
+  overflow: hidden;
+}
+.forecast-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+}
+.forecast-pct {
+  font-size: 16px;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 디테일 그리드 ──────────────────────────────────────── */
+.detail-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (min-width: 720px) {
+  .detail-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .hero {
+    padding-top: 40px;
+  }
+  .forecast-card {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+.detail-card {
+  padding: 14px 16px 16px;
+  min-height: 104px;
+  display: flex;
+  flex-direction: column;
+}
+.detail-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--sub-text);
+}
+.detail-icon {
+  display: grid;
+  place-items: center;
+}
+.detail-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.detail-body {
+  margin-top: auto;
+}
+.detail-value {
+  font-size: 30px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.1;
+}
+.detail-value.sm {
+  font-size: 22px;
+}
+.detail-value .unit {
+  font-size: 15px;
+  font-weight: 500;
+  opacity: 0.7;
+}
+.detail-sub {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--sub-text);
+  margin-top: 3px;
+}
+.detail-moon-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.detail-moon-row .moon-name {
+  font-size: 13px;
+}
+
+.updated {
+  text-align: center;
+  font-size: 12px;
+  color: var(--sub-text);
+  margin-top: 22px;
+  opacity: 0.8;
+}
+
+/* ── 상태 메시지 ────────────────────────────────────────── */
+.state-msg {
+  text-align: center;
+  padding: 80px 24px;
+  color: var(--sub-text);
+}
+.state-msg p {
+  margin-top: 14px;
+  font-size: 15px;
+}
+.state-msg button {
+  margin-top: 16px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 9px 20px;
+  border-radius: 99px;
+  cursor: pointer;
+}
+.spinner {
+  width: 30px;
+  height: 30px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255, 255, 255, 0.18);
+  border-top-color: var(--text);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── 검색 오버레이 ──────────────────────────────────────── */
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(8, 10, 22, 0.55);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  display: flex;
+  justify-content: center;
+  animation: fade 0.2s ease;
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+.search-panel {
+  width: 100%;
+  max-width: 560px;
+  padding: max(env(safe-area-inset-top), 18px) 16px 16px;
+}
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  padding: 11px 13px;
+  color: #f4f6ff;
+}
+.search-bar input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  outline: none;
+}
+.search-bar input::placeholder {
+  color: rgba(244, 246, 255, 0.5);
+}
+.search-cancel {
+  border: none;
+  background: transparent;
+  color: #8ea2ff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.search-results {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.search-hint {
+  color: rgba(244, 246, 255, 0.6);
+  font-size: 14px;
+  padding: 16px 6px;
+  line-height: 1.5;
+}
+.search-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-family: inherit;
+  padding: 13px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.search-result:active {
+  background: rgba(255, 255, 255, 0.06);
+}
+.result-name {
+  font-size: 17px;
+  font-weight: 600;
+}
+.result-meta {
+  font-size: 13px;
+  color: rgba(244, 246, 255, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud-blob {
+    animation: none;
+  }
+  .sky {
+    transition: none;
+  }
+}
