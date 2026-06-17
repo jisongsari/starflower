@@ -1,48 +1,31 @@
 import type { GeoResult } from "../types";
 
-// 위치 검색
-// 1순위: Nominatim(OpenStreetMap) — 한글 부분검색에 강함 ("서울" → 서울특별시)
-// 백업:  Open-Meteo 지오코딩 — Nominatim이 실패/결과없음일 때
-//
-// 의미 없는 한 글자 입력으로 엉뚱한 결과가 쏟아지지 않도록
-// (1) 최소 2글자부터 검색하고 (2) 거주지/행정구역 유형만 남긴다.
+// 한글 포함 여부
+const isKorean = (s: string) => /[\uAC00-\uD7A3\u1100-\u11FF\u3130-\u318F]/.test(s);
+
+// 도시·마을·행정구역으로 인정할 유형
+const PLACE_TYPES = new Set([
+  "city", "town", "village", "hamlet", "municipality",
+  "suburb", "neighbourhood", "quarter", "borough",
+  "city_district", "district", "county", "province",
+  "state", "region", "administrative", "island",
+]);
+
 export async function searchLocations(query: string): Promise<GeoResult[]> {
   const q = query.trim();
-  if (q.length < 2) return []; // 한 글자 등 의미 없는 입력 차단
+  if (q.length < 2) return [];
 
   try {
-    const nm = await searchNominatim(q);
-    if (nm.length > 0) return nm;
-  } catch {
-    /* 백업으로 */
-  }
+    const results = await searchNominatim(q);
+    if (results.length > 0) return results;
+  } catch { /* 백업으로 */ }
+
   try {
     return await searchOpenMeteo(q);
   } catch {
     return [];
   }
 }
-
-// 도시·마을·행정구역 등 "장소"로 인정할 유형만 통과
-const PLACE_TYPES = new Set([
-  "city",
-  "town",
-  "village",
-  "hamlet",
-  "municipality",
-  "suburb",
-  "neighbourhood",
-  "quarter",
-  "borough",
-  "city_district",
-  "district",
-  "county",
-  "province",
-  "state",
-  "region",
-  "administrative",
-  "island",
-]);
 
 // ── Nominatim ──────────────────────────────────────────────
 interface NominatimItem {
@@ -54,6 +37,7 @@ interface NominatimItem {
   addresstype?: string;
   type?: string;
   category?: string;
+  importance?: number;
   address?: {
     city?: string;
     town?: string;
@@ -62,29 +46,30 @@ interface NominatimItem {
     state?: string;
     province?: string;
     country?: string;
+    country_code?: string;
   };
 }
 
-async function searchNominatim(q: string): Promise<GeoResult[]> {
+function nominatimFetch(q: string, extraParams: Record<string, string> = {}): Promise<NominatimItem[]> {
   const url = new URL("https://nominatim.openstreetmap.org/search");
   url.searchParams.set("q", q);
   url.searchParams.set("format", "jsonv2");
   url.searchParams.set("addressdetails", "1");
   url.searchParams.set("accept-language", "ko");
   url.searchParams.set("limit", "10");
-  url.searchParams.set("countrycodes", "kr"); // 한국 지명 우선
+  for (const [k, v] of Object.entries(extraParams)) url.searchParams.set(k, v);
+  return fetch(url.toString(), { headers: { "Accept-Language": "ko" } })
+    .then((r) => (r.ok ? r.json() : Promise.reject()));
+}
 
-  const res = await fetch(url.toString(), {
-    headers: { "Accept-Language": "ko" },
-  });
-  if (!res.ok) throw new Error("nominatim failed");
-  const data: NominatimItem[] = await res.json();
-
+function parseItems(items: NominatimItem[]): GeoResult[] {
   const seen = new Set<string>();
   const out: GeoResult[] = [];
 
-  for (const it of data) {
-    // 거주지/행정구역 유형만 (도로·상점·건물 등 제외)
+  // importance 내림차순 정렬 (큰 도시가 위로)
+  const sorted = [...items].sort((a, b) => (b.importance ?? 0) - (a.importance ?? 0));
+
+  for (const it of sorted) {
     const kind = it.addresstype || it.type || "";
     const isPlace =
       PLACE_TYPES.has(kind) || it.category === "place" || it.category === "boundary";
@@ -100,7 +85,6 @@ async function searchNominatim(q: string): Promise<GeoResult[]> {
     const admin1 = a.state || a.province;
     const country = a.country;
 
-    // 중복 제거 (같은 이름+상위행정구역)
     const key = `${name}|${admin1 ?? ""}|${country ?? ""}`;
     if (seen.has(key)) continue;
     seen.add(key);
@@ -109,6 +93,30 @@ async function searchNominatim(q: string): Promise<GeoResult[]> {
     if (out.length >= 6) break;
   }
   return out;
+}
+
+async function searchNominatim(q: string): Promise<GeoResult[]> {
+  if (isKorean(q)) {
+    // 한글: 한국 우선 + 전세계 병렬 요청 → 한국 결과를 앞에 배치
+    const [krItems, allItems] = await Promise.allSettled([
+      nominatimFetch(q, { countrycodes: "kr" }),
+      nominatimFetch(q),
+    ]);
+
+    const kr = krItems.status === "fulfilled" ? krItems.value : [];
+    const all = allItems.status === "fulfilled" ? allItems.value : [];
+
+    // 한국 결과 먼저, 나머지는 importance 순으로
+    const krIds = new Set(kr.map((i) => i.place_id));
+    const rest = all.filter((i) => !krIds.has(i.place_id));
+    const merged = [...kr, ...rest];
+
+    return parseItems(merged);
+  } else {
+    // 로마자 등: 전세계 검색
+    const items = await nominatimFetch(q);
+    return parseItems(items);
+  }
 }
 
 // ── Open-Meteo (백업) ──────────────────────────────────────
