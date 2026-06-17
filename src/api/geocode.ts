@@ -72,6 +72,7 @@ async function searchNominatim(q: string): Promise<GeoResult[]> {
   url.searchParams.set("addressdetails", "1");
   url.searchParams.set("accept-language", "ko");
   url.searchParams.set("limit", "10");
+  url.searchParams.set("countrycodes", "kr"); // 한국 지명 우선
 
   const res = await fetch(url.toString(), {
     headers: { "Accept-Language": "ko" },

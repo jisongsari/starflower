@@ -81,7 +81,7 @@ export default function SearchOverlay({ open, onClose, onSelect, dismissable }: 
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="도시 또는 지역 검색"
+            placeholder="수원시, 제주시, 광양시 ..."
             autoComplete="off"
             spellCheck={false}
           />
@@ -96,7 +96,7 @@ export default function SearchOverlay({ open, onClose, onSelect, dismissable }: 
           {loading && <div className="search-hint">검색 중…</div>}
           {err && !loading && <div className="search-hint">{err}</div>}
           {!query.trim() && !loading && (
-            <div className="search-hint">관측할 지역을 검색해 보세요. 검색한 위치는 자동으로 저장돼요.</div>
+            <div className="search-hint">관측할 지역을 검색해 보세요.<br />정확한 결과를 위해 <strong>수원시</strong>, <strong>제주시</strong>처럼 '시·군·구'까지 입력해 주세요.</div>
           )}
           {query.trim().length === 1 && !loading && (
             <div className="search-hint">두 글자 이상 입력해 주세요.</div>
