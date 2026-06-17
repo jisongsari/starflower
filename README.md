@@ -1,9 +1,11 @@
 # 별바라기 🌙
 
+![별바라기 메인 화면](assets/screen.png)
+
 오늘 밤의 별 관측 조건을 0–100%로 수치화하는 웹 서비스입니다.
 [링크](https://star.wolilab.com)
 
-![별바라기 메인 화면](assets/screenshot.png)
+
 
 
 ## 화면
