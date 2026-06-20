@@ -20,7 +20,7 @@ struct ScoreHeroView: View {
             Text("오늘 밤 관측 지수")
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(sub)
-                .padding(.bottom, 2)
+                //.padding(.bottom, 2)
 
             HStack(alignment: .top, spacing: 2) {
                 Text("\(score)")
@@ -33,7 +33,7 @@ struct ScoreHeroView: View {
                     .foregroundStyle(text.opacity(0.85))
                     .padding(.top, 22)
             }
-            .padding(.top, 4)
+            .padding(.top, 1)
 
             Text(ScoreCalculator.verdict(for: score))
                 .font(.system(size: 21, weight: .semibold))

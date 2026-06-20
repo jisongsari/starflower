@@ -14,8 +14,21 @@ struct StargazingEntry: TimelineEntry {
     let score: Int
     let locationName: String
     let condition: SkyCondition
+    let daypart: Daypart
     let moonIllum: Double
     let moonPhase: Double
+    let moonAltitude: Double
+    let temperature: Double
+    let pressure: Double
+    let nightCloud: Double
+    let nightHumidity: Double
+    let nightWind: Double
+    let nightPm25: Double
+    let sunrise: Date
+    let sunset: Date
+    let moonName: String
+    let moonrise: Date?
+    let moonset: Date?
 }
 
 // ── 데이터 공급자 ─────────────────────────────────────────
@@ -23,15 +36,20 @@ struct Provider: TimelineProvider {
 
     // 프리뷰용 더미 데이터
     func placeholder(in context: Context) -> StargazingEntry {
-        StargazingEntry(
-            date: .now,
-            score: 72,
-            locationName: "수원시",
-            condition: .clear,
-            moonIllum: 0.3,
-            moonPhase: 0.2
-        )
-    }
+            dummyEntry()
+        }
+    
+    private func dummyEntry() -> StargazingEntry {
+            StargazingEntry(
+                date: .now, score: 72, locationName: "수원시",
+                condition: .clear, daypart: .night,
+                moonIllum: 0.3, moonPhase: 0.2, moonAltitude: 0.5,
+                temperature: 12, pressure: 1013,
+                nightCloud: 10, nightHumidity: 45, nightWind: 2.0, nightPm25: 15,
+                sunrise: .now, sunset: .now, moonName: "초승달",
+                moonrise: .now, moonset: .now
+            )
+        }
 
     // 위젯 갤러리 미리보기용
     func getSnapshot(in context: Context,
@@ -58,74 +76,106 @@ struct Provider: TimelineProvider {
         let lat = defaults?.double(forKey: "latitude")  ?? 37.5665
         let lng = defaults?.double(forKey: "longitude") ?? 126.9780
         let name = defaults?.string(forKey: "locationName") ?? "위치 없음"
-
-        // WeatherService로 직접 API 호출
-        guard let weather = try? await WeatherService.shared.fetchWeather(lat: lat, lng: lng)
-        else {
-            return StargazingEntry(
-                date: .now, score: 0,
-                locationName: name,
-                condition: .overcast,
-                moonIllum: 0, moonPhase: 0
-            )
+        
+        guard let wx = try? await WeatherService.shared.fetchWeather(lat: lat, lng: lng) else {
+            return dummyEntry()
         }
-
         let air = await WeatherService.shared.fetchAir(lat: lat, lng: lng)
-
-        // 오늘 밤 구간 계산
+        
         let now = Date()
-        let calendar = Calendar.current
-        let hour = calendar.component(.hour, from: now)
-        let todayEvening = hour < 6
-            ? calendar.date(byAdding: .day, value: -1, to: now)!
-            : now
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        let eveningStr = formatter.string(from: todayEvening)
-        let morningStr = formatter.string(
-            from: calendar.date(byAdding: .day, value: 1, to: todayEvening)!
-        )
-
-        let indices = nightIndices(
-            times: weather.hourly.time,
-            eveningDate: eveningStr,
-            morningDate: morningStr
-        )
-
-        let cloud    = average(indices.map { weather.hourly.cloudCover[$0] })
-        let humidity = average(indices.map { weather.hourly.relativeHumidity2m[$0] })
-        let wind     = average(indices.map { weather.hourly.windSpeed10m[$0] })
-        let pm25     = airAverage(air: air, times: weather.hourly.time, indices: indices)
-
-        let moonIllum = MoonCalculator.illumination(date: now)
-        let exposure  = MoonCalculator.nightExposure(
-            start: nightStart(eveningStr),
-            end:   nightEnd(eveningStr),
-            lat:   lat, lng: lng
-        )
-
+        let cal = Calendar.current
+        let cur = wx.current
+        let hourly = wx.hourly
+        let hour = cal.component(.hour, from: now)
+        let todayEvening = hour < 6 ? cal.date(byAdding: .day, value: -1, to: now)! : now
+        
+        func dateStr(_ d: Date) -> String {
+            let f = DateFormatter(); f.locale = Locale(identifier: "en_US_POSIX")
+            f.dateFormat = "yyyy-MM-dd"; return f.string(from: d)
+        }
+        let eStr = dateStr(todayEvening)
+        let mStr = dateStr(cal.date(byAdding: .day, value: 1, to: todayEvening)!)
+        let idxs: [Int] = hourly.time.enumerated().compactMap { i, t in
+            let d = String(t.prefix(10))
+            guard let h = Int(t.dropFirst(11).prefix(2)) else { return nil }
+            if d == eStr && h >= 19 { return i }
+            if d == mStr && h <= 5  { return i }
+            return nil
+        }
+        func avg(_ v: [Double]) -> Double {
+            let f = v.filter { $0.isFinite }; return f.isEmpty ? 0 : f.reduce(0,+)/Double(f.count)
+        }
+        let cloud = avg(idxs.map { hourly.cloudCover[$0] })
+        let hum   = avg(idxs.map { hourly.relativeHumidity2m[$0] })
+        let wind  = avg(idxs.map { hourly.windSpeed10m[$0] })
+        var pm = 0.0
+        if let air {
+            let vals: [Double] = idxs.compactMap { i in
+                guard i < hourly.time.count,
+                      let j = air.hourly.time.firstIndex(of: hourly.time[i]) else { return nil }
+                return air.hourly.pm25[j]
+            }
+            pm = avg(vals)
+        }
+        
+        func ymd(_ s: String) -> DateComponents {
+            let p = s.split(separator: "-").compactMap { Int($0) }
+            return DateComponents(year: p[0], month: p[1], day: p[2])
+        }
+        var sc = ymd(eStr); sc.hour = 19; let nStart = cal.date(from: sc) ?? now
+        var ec = ymd(eStr); ec.day! += 1; ec.hour = 5; let nEnd = cal.date(from: ec) ?? now
+        var mc = ymd(eStr); mc.hour = 24; let nMid = cal.date(from: mc) ?? now
+        
+        let moonMid = MoonCalculator.illumination(date: nMid)
+        let exposure = MoonCalculator.nightExposure(start: nStart, end: nEnd, lat: lat, lng: lng)
         let score = ScoreCalculator.compute(NightInputs(
-            cloud: cloud, humidity: humidity,
-            pm25: pm25, wind: wind,
-            moonIllum: moonIllum.fraction,
-            moonExposure: exposure
-        ))
-
-        let condition = classifySky(
-            code: weather.current.weatherCode,
-            cloud: cloud
-        )
+            cloud: cloud, humidity: hum, pm25: pm, wind: wind,
+            moonIllum: moonMid.fraction, moonExposure: exposure))
+        
+        func classify(_ code: Int, _ c: Double) -> SkyCondition {
+            if code >= 95 { return .rain }
+            if (71...77).contains(code) || code == 85 || code == 86 { return .snow }
+            if (51...67).contains(code) || (80...82).contains(code) { return .rain }
+            if code == 45 || code == 48 { return .fog }
+            if c < 15 { return .clear }; if c < 50 { return .partly }
+            if c < 85 { return .cloudy }; return .overcast
+        }
+        let repIdx = idxs.first { hourly.time[$0].hasSuffix("T23:00") } ?? idxs.first ?? -1
+        let condition = classify(repIdx >= 0 ? hourly.weatherCode[repIdx] : cur.weatherCode, cloud)
+        
+        let moonNow = MoonCalculator.illumination(date: now)
+        let moonPos = MoonCalculator.position(date: now, lat: lat, lng: lng)
+        
+        let sunNow = MoonCalculator.getSunAltitude(date: now, lat: lat, lng: lng)
+        let sunLater = MoonCalculator.getSunAltitude(date: now.addingTimeInterval(600), lat: lat, lng: lng)
+        let tw = 0.12
+        let daypart: Daypart = sunNow > tw ? .day : sunNow < -tw ? .night : (sunLater > sunNow ? .dawn : .dusk)
+        
+        func parseDate(_ s: String) -> Date {
+            let f = DateFormatter(); f.locale = Locale(identifier: "en_US_POSIX")
+            f.timeZone = .current; f.dateFormat = "yyyy-MM-dd'T'HH:mm"
+            return f.date(from: s) ?? now
+        }
+        let moonRefDate: Date
+        if cal.component(.hour, from: now) < 6 {
+            moonRefDate = cal.date(byAdding: .day, value: -1, to: cal.startOfDay(for: now))!
+        } else {
+            moonRefDate = cal.startOfDay(for: now)
+        }
+        let moonRS = MoonCalculator.moonRiseSet(referenceDate: moonRefDate, lat: lat, lng: lng)
 
         return StargazingEntry(
-            date: .now,
-            score: score,
-            locationName: name,
-            condition: condition,
-            moonIllum: moonIllum.fraction,
-            moonPhase: moonIllum.phase
-        )
-    }
+            date: now, score: score, locationName: name,
+            condition: condition, daypart: daypart,
+            moonIllum: moonNow.fraction, moonPhase: moonNow.phase, moonAltitude: moonPos.altitude,
+            temperature: cur.temperature2m, pressure: cur.surfacePressure,
+            nightCloud: cloud, nightHumidity: hum, nightWind: wind, nightPm25: pm,
+            sunrise: parseDate(wx.daily.sunrise.first ?? ""),
+            sunset: parseDate(wx.daily.sunset.first ?? ""),
+            moonName: ScoreCalculator.moonPhaseName(phase: moonNow.phase),
+            moonrise: moonRS.rise,
+            moonset:  moonRS.set)
+        }
 
     // ── 유틸리티 (ViewModel과 동일) ───────────────────────
     private func nightIndices(times: [String],
@@ -199,7 +249,7 @@ struct StarflowerWidget: Widget {
             WidgetEntryView(entry: entry)
         }
         .configurationDisplayName("별바라기")
-        .description("오늘 밤 별보기 지수")
+        .description("오늘 밤 관측 지수")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

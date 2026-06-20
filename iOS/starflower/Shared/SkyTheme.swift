@@ -127,10 +127,18 @@ struct SkyGradientLayer: View {
     @ViewBuilder private var dayBG: some View {
         switch condition {
         case .clear:
-            linear([skyStop(skyColor(47,116,192), 0), skyStop(skyColor(79,147,212), 0.45),
-                    skyStop(skyColor(143,192,232), 1)])
-            radial([skyStop(skyColor(255,236,170,0.55), 0), skyStop(skyColor(255,236,170,0), 0.4)],
-                   cx: 0.8, cy: 0.06, r: 0.6)
+                    linear([skyStop(skyColor(47,116,192), 0), skyStop(skyColor(79,147,212), 0.45),
+                            skyStop(skyColor(143,192,232), 1)])
+                    GeometryReader { geo in
+                        Circle()
+                            .fill(RadialGradient(
+                                colors: [skyColor(255,240,180, 0.9), skyColor(255,236,170, 0.0)],
+                                center: .center, startRadius: 0, endRadius: 260))
+                            .frame(width: 520, height: 520)
+                            .blur(radius: 40)
+                            .position(x: geo.size.width * 0.8, y: geo.size.height * 0.12)
+                    }
+                    .ignoresSafeArea()
         case .partly:
             linear([skyStop(skyColor(90,130,180), 0), skyStop(skyColor(125,159,198), 0.5),
                     skyStop(skyColor(170,195,222), 1)])

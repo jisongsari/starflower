@@ -75,7 +75,15 @@ struct ContentView: View {
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundStyle(.white.opacity(0.85))
                                 .frame(width: 34, height: 34)
-                                .background(.white.opacity(0.1)).clipShape(Circle())
+                                .background {
+                                            ZStack {
+                                                Color.black
+                                                    .opacity(0.3)
+                                                    .blendMode(.softLight)
+                                                    
+                                            }
+                                        }
+                                .clipShape(Circle())
                                 .overlay(Circle().stroke(.white.opacity(0.12), lineWidth: 1))
                         }
                     }

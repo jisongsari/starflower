@@ -95,6 +95,7 @@ final class WeatherService {
             .init(name: "wind_speed_unit",value: "ms"),
             .init(name: "timezone",       value: "auto"),
             .init(name: "forecast_days",  value: "4"),
+            .init(name: "past_days", value: "1"),
         ]
 
         let (data, response) = try await session.data(from: components.url!)

@@ -11,7 +11,6 @@ import WidgetKit
 struct WidgetEntryView: View {
     var entry: StargazingEntry
     @Environment(\.widgetFamily) var family
-
     var body: some View {
         switch family {
         case .systemSmall:  SmallWidgetView(entry: entry)
@@ -21,168 +20,234 @@ struct WidgetEntryView: View {
     }
 }
 
-// ── 소형 위젯 ─────────────────────────────────────────────
-struct SmallWidgetView: View {
+// ── 위젯 배경: 그라데이션 + 상태별 은은한 효과 ────────────
+private struct WidgetSky: View {
     let entry: StargazingEntry
 
     var body: some View {
         ZStack {
-            // 배경 그라데이션
-            LinearGradient(
-                colors: [Color(hex: "#050616"), Color(hex: "#131a4d")],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            LinearGradient(gradient: Gradient(stops: stops),
+                           startPoint: .topLeading, endPoint: .bottomTrailing)
 
-            VStack(alignment: .leading, spacing: 4) {
-                // 위치명
-                Text(entry.locationName)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.65))
-
-                Spacer()
-
-                // 큰 점수
-                HStack(alignment: .top, spacing: 1) {
-                    Text("\(entry.score)")
-                        .font(.system(size: 52, weight: .ultraLight))
-                        .foregroundStyle(.white)
-                    Text("%")
-                        .font(.system(size: 20, weight: .light))
-                        .foregroundStyle(.white.opacity(0.8))
-                        .padding(.top, 8)
-                }
-
-                // 별보기 지수 레이블
-                Text("별보기 지수")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.5))
-
-                Spacer()
-
-                // 날씨 아이콘 + 평가
-                HStack(spacing: 4) {
-                    Image(systemName: conditionSymbol)
-                        .font(.system(size: 11))
-                        .foregroundStyle(.white.opacity(0.6))
-                    Text(ScoreCalculator.verdict(for: entry.score))
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.6))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                }
+            // 맑은 밤: 별
+            if entry.daypart == .night && entry.condition == .clear {
+                WidgetStars()
             }
-            .padding(14)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        }
-        .containerBackground(for: .widget) {
-            Color(hex: "#0a0e2e")
+            // 맑은 낮: 연한 해
+            if entry.daypart == .day && entry.condition == .clear {
+                Circle()
+                    .fill(RadialGradient(colors: [col(255,240,180).opacity(0.5), col(255,236,170).opacity(0)],
+                                         center: .center, startRadius: 0, endRadius: 90))
+                    .frame(width: 180, height: 180)
+                    .blur(radius: 18)
+                    .offset(x: 70, y: -46)
+            }
+            // 흐림/구름/비/눈: 은은한 구름 덩어리
+            if [.cloudy, .overcast, .fog, .rain, .snow].contains(entry.condition) {
+                WidgetClouds(tint: .white.opacity(0.18))
+            } else if entry.condition == .partly {
+                WidgetClouds(tint: .white.opacity(0.12))
+            }
         }
     }
 
-    private var conditionSymbol: String {
-        switch entry.condition {
-        case .clear:    return "moon.stars.fill"
-        case .partly:   return "cloud.moon.fill"
-        case .cloudy:   return "cloud.fill"
-        case .overcast: return "smoke.fill"
-        case .fog:      return "cloud.fog.fill"
-        case .rain:     return "cloud.rain.fill"
-        case .snow:     return "cloud.snow.fill"
+    private func col(_ r: Double, _ g: Double, _ b: Double) -> Color {
+        Color(.sRGB, red: r/255, green: g/255, blue: b/255, opacity: 1)
+    }
+    private var stops: [Gradient.Stop] {
+        func s(_ c: Color, _ l: Double) -> Gradient.Stop { .init(color: c, location: l) }
+        switch entry.daypart {
+        case .night:
+            switch entry.condition {
+            case .clear:  return [s(col(8,10,34),0), s(col(20,27,77),0.6), s(col(33,42,110),1)]
+            case .partly: return [s(col(12,18,44),0), s(col(28,38,78),1)]
+            default:      return [s(col(26,32,48),0), s(col(48,56,74),1)]
+            }
+        case .day:
+            switch entry.condition {
+            case .clear:  return [s(col(64,128,200),0), s(col(140,185,228),1)]
+            case .partly: return [s(col(96,134,184),0), s(col(168,193,220),1)]
+            default:      return [s(col(120,132,150),0), s(col(168,177,189),1)]
+            }
+        case .dawn: return [s(col(38,52,98),0), s(col(120,96,140),0.55), s(col(224,176,140),1)]
+        case .dusk: return [s(col(34,44,92),0), s(col(128,82,128),0.55), s(col(228,160,116),1)]
         }
     }
 }
 
-// ── 중형 위젯 ─────────────────────────────────────────────
-struct MediumWidgetView: View {
-    let entry: StargazingEntry
-
+private struct WidgetStars: View {
+    private let stars: [(x: Double, y: Double, r: Double, a: Double)] = (0..<40).map { _ in
+        (.random(in: 0...1), .random(in: 0...0.85),
+         pow(Double.random(in: 0...1), 2) * 1.3 + 0.4, .random(in: 0.4...0.95))
+    }
     var body: some View {
-        ZStack {
-            LinearGradient(
-                colors: [Color(hex: "#050616"), Color(hex: "#131a4d")],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-
-            HStack(spacing: 0) {
-                // 왼쪽: 점수
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(entry.locationName)
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.65))
-
-                    Spacer()
-
-                    HStack(alignment: .top, spacing: 1) {
-                        Text("\(entry.score)")
-                            .font(.system(size: 56, weight: .ultraLight))
-                            .foregroundStyle(.white)
-                        Text("%")
-                            .font(.system(size: 22, weight: .light))
-                            .foregroundStyle(.white.opacity(0.8))
-                            .padding(.top, 10)
-                    }
-
-                    Text(ScoreCalculator.verdict(for: entry.score))
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.75))
-
-                    Spacer()
+        GeometryReader { geo in
+            Canvas { ctx, size in
+                for s in stars {
+                    let x = s.x * size.width, y = s.y * size.height
+                    ctx.fill(Path(ellipseIn: CGRect(x: x-s.r, y: y-s.r, width: s.r*2, height: s.r*2)),
+                             with: .color(.white.opacity(s.a)))
                 }
-                .padding(16)
-                .frame(maxHeight: .infinity, alignment: .leading)
-
-                Divider()
-                    .background(.white.opacity(0.1))
-                    .padding(.vertical, 16)
-
-                // 오른쪽: 달 + 업데이트 시각
-                VStack(alignment: .leading, spacing: 8) {
-                    // 달
-                    HStack(spacing: 8) {
-                        MoonView(
-                            illumination: entry.moonIllum,
-                            waxing: entry.moonPhase < 0.5,
-                            size: 36
-                        )
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text("\(Int(entry.moonIllum * 100))%")
-                                .font(.system(size: 16, weight: .light))
-                                .foregroundStyle(.white)
-                            Text(ScoreCalculator.moonPhaseName(phase: entry.moonPhase))
-                                .font(.system(size: 10))
-                                .foregroundStyle(.white.opacity(0.55))
-                        }
-                    }
-
-                    Divider()
-                        .background(.white.opacity(0.1))
-
-                    // 업데이트 시각
-                    HStack(spacing: 4) {
-                        Image(systemName: "clock")
-                            .font(.system(size: 10))
-                            .foregroundStyle(.white.opacity(0.4))
-                        Text(updateTimeString)
-                            .font(.system(size: 10))
-                            .foregroundStyle(.white.opacity(0.4))
-                    }
-
-                    Spacer()
-                }
-                .padding(16)
-                .frame(maxHeight: .infinity, alignment: .leading)
             }
         }
-        .containerBackground(for: .widget) {
-            Color(hex: "#0a0e2e")
+    }
+}
+
+private struct WidgetClouds: View {
+    let tint: Color
+    private let blobs: [(x: Double, y: Double, w: Double, o: Double)] = [
+        (0.2, 0.18, 150, 0.9), (0.7, 0.10, 120, 0.7), (0.85, 0.55, 140, 0.5),
+    ]
+    var body: some View {
+        GeometryReader { geo in
+            ZStack {
+                ForEach(blobs.indices, id: \.self) { i in
+                    let b = blobs[i]
+                    Ellipse()
+                        .fill(RadialGradient(colors: [tint.opacity(b.o), tint.opacity(0)],
+                                             center: .center, startRadius: 0, endRadius: b.w * 0.5))
+                        .frame(width: b.w, height: b.w * 0.5)
+                        .blur(radius: 14)
+                        .position(x: geo.size.width * b.x, y: geo.size.height * b.y)
+                }
+            }
         }
     }
+}
 
-    private var updateTimeString: String {
-        let f = DateFormatter()
-        f.dateFormat = "HH:mm 기준"
-        return f.string(from: entry.date)
+private func symbol(_ c: SkyCondition) -> String {
+    switch c {
+    case .clear: return "moon.stars.fill"
+    case .partly: return "cloud.moon.fill"
+    case .cloudy, .overcast, .fog: return "cloud.fill"
+    case .rain: return "cloud.rain.fill"
+    case .snow: return "cloud.snow.fill"
+    }
+}
+private func hhmm(_ d: Date?) -> String {
+    guard let d else { return "—" }
+    let f = DateFormatter(); f.dateFormat = "HH:mm"; return f.string(from: d)
+}
+
+// ── 2x2 ───────────────────────────────────────────────────
+struct SmallWidgetView: View {
+    let entry: StargazingEntry
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(entry.locationName)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.75))
+            Spacer(minLength: 0)
+            HStack(alignment: .top, spacing: 1) {
+                Text("\(entry.score)").font(.system(size: 64, weight: .thin)).foregroundStyle(.white)
+                Text("%").font(.system(size: 24, weight: .regular))
+                    .foregroundStyle(.white.opacity(0.85)).padding(.top, 10)
+            }
+            HStack(spacing: 5) {
+                Image(systemName: symbol(entry.condition))
+                    .font(.system(size: 13)).foregroundStyle(.white.opacity(0.8))
+                Text(ScoreCalculator.verdict(for: entry.score))
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.8)).lineLimit(1).minimumScaleFactor(0.7)
+            }
+            Spacer(minLength: 0)
+            Text("기온 \(Int(entry.temperature.rounded()))° · \(hhmm(entry.date))")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.white.opacity(0.5))
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .containerBackground(for: .widget) { WidgetSky(entry: entry) }
+    }
+}
+
+// ── 4x2 ───────────────────────────────────────────────────
+struct MediumWidgetView: View {
+    let entry: StargazingEntry
+    var body: some View {
+        GeometryReader { geo in
+            HStack(spacing: 12) {
+                // 왼쪽 (40%)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(entry.locationName)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.75))
+                    Spacer(minLength: 0)
+                    HStack(alignment: .top, spacing: 1) {
+                        Text("\(entry.score)").font(.system(size: 58, weight: .thin)).foregroundStyle(.white)
+                        Text("%").font(.system(size: 22, weight: .regular))
+                            .foregroundStyle(.white.opacity(0.85)).padding(.top, 9)
+                    }
+                    HStack(spacing: 5) {
+                        Image(systemName: symbol(entry.condition))
+                            .font(.system(size: 12)).foregroundStyle(.white.opacity(0.8))
+                        Text(ScoreCalculator.verdict(for: entry.score))
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.8)).lineLimit(1).minimumScaleFactor(0.7)
+                    }
+                    Spacer(minLength: 0)
+                    Text("\(hhmm(entry.date))")
+                        .font(.system(size: 11, weight: .medium)).foregroundStyle(.white.opacity(0.5))
+                }
+                .frame(width: geo.size.width * 0.40, alignment: .leading)
+
+                // 오른쪽 (60%)
+                VStack(spacing: 10) {
+                    // 달 + 월몰/월출
+                    HStack(spacing: 10) {
+                        MoonView(illumination: entry.moonIllum, waxing: entry.moonPhase < 0.5, size: 36)
+                            .frame(width: 36, height: 36)
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("\(Int((entry.moonIllum*100).rounded()))%")
+                                .font(.system(size: 18, weight: .regular)).foregroundStyle(.white)
+                            Text(entry.moonName)
+                                .font(.system(size: 11)).foregroundStyle(.white.opacity(0.6))
+                        }
+                        Spacer(minLength: 0)
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack(spacing: 4) {
+                                Text("월출")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(.white.opacity(0.55))
+                                Text(hhmm(entry.moonrise))
+                                    .font(.system(size: 12, weight: .regular))
+                                    .foregroundStyle(.white)
+                            }
+                            HStack(spacing: 4) {
+                                Text("월몰")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(.white.opacity(0.55))
+                                Text(hhmm(entry.moonset))
+                                    .font(.system(size: 12, weight: .regular))
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                    }
+                    let cols = [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8),
+                                GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)]
+                    LazyVGrid(columns: cols, spacing: 9) {
+                        metric("일몰", hhmm(entry.sunset))
+                        metric("일출", hhmm(entry.sunrise))
+                        metric("운량", "\(Int(entry.nightCloud.rounded()))%")
+                        metric("습도", "\(Int(entry.nightHumidity.rounded()))%")
+                        metric("풍속", "\(String(format: "%.1f", entry.nightWind))㎧")
+                        metric("기압", "\(Int(entry.pressure.rounded()))h")
+                        metric("미세먼지", "\(Int(entry.nightPm25.rounded()))㎍")
+                        metric("기온", "\(Int(entry.temperature.rounded()))°")
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 4)
+            }
+        }
+        .containerBackground(for: .widget) { WidgetSky(entry: entry) }
+    }
+
+    private func metric(_ label: String, _ value: String) -> some View {
+        VStack(spacing: 2) {
+            Text(label).font(.system(size: 9)).foregroundStyle(.white.opacity(0.55))
+                .lineLimit(1).minimumScaleFactor(0.7)
+            Text(value).font(.system(size: 12, weight: .regular))
+                .foregroundStyle(.white).lineLimit(1).minimumScaleFactor(0.6)
+        }
     }
 }

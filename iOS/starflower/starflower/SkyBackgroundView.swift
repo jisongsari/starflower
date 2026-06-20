@@ -16,7 +16,7 @@ struct SkyBackgroundView: View {
 
     private var theme: SkyTheme { SkyThemeProvider.theme(condition, daypart) }
     private var moonVisible: Bool { theme.showMoon && moonAltitude > 0.02 }
-    private var moonTop: Double { 0.14 - min(1, max(0, sin(moonAltitude))) * 0.06 }
+    private var moonTop: Double { 0.22 - min(1, max(0, sin(moonAltitude))) * 0.06 }
     private var moonSize: CGFloat { 104 + moonIllum * 34 }
 
     var body: some View {

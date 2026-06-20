@@ -38,6 +38,7 @@ final class StargazingViewModel: ObservableObject {
         savedLocation = SavedLocation(name: r.name, admin1: r.admin1, country: r.country,
                                       latitude: r.latitude, longitude: r.longitude)
         showSearch = false
+        data = nil           // 이전 데이터 치워서 로딩창 표시
         Task { await loadData() }
     }
 
@@ -121,7 +122,27 @@ final class StargazingViewModel: ObservableObject {
         if sunNow > tw { daypart = .day }
         else if sunNow < -tw { daypart = .night }
         else { daypart = sunLater > sunNow ? .dawn : .dusk }
+        
+        // past_days=1 추가로 daily[0]=어제, [1]=오늘, [2]=내일
+        let daily = wx.daily
+        let todayIdx = 1  // 오늘은 항상 index 1
+        let isEarly = hour < 6
 
+        // 0~6시: 전일 일몰(daily[0]) + 금일 일출(daily[1])
+        // 나머지: 금일 일몰(daily[1]) + 익일 일출(daily[2])
+        let chosenSunset  = parseDate(daily.sunset[isEarly ? 0 : todayIdx])
+        let chosenSunrise = parseDate(daily.sunrise[isEarly ? todayIdx : min(todayIdx + 1, daily.sunrise.count - 1)])
+
+        // 0~6시엔 전일 기준, 나머지는 오늘 기준
+        let moonRefDate: Date
+        if hour < 6 {
+            moonRefDate = cal.date(byAdding: .day, value: -1, to: cal.startOfDay(for: now))!
+        } else {
+            moonRefDate = cal.startOfDay(for: now)
+        }
+        let moonRS = MoonCalculator.moonRiseSet(
+            referenceDate: moonRefDate, lat: lat, lng: lng)
+        
         return StargazingData(
             location: loc,
             score: forecast.first?.score ?? 0,
@@ -130,12 +151,15 @@ final class StargazingViewModel: ObservableObject {
             temperature: cur.temperature2m,
             pressure: cur.surfacePressure,
             nightCloud: n0Cloud, nightHumidity: n0Hum, nightWind: n0Wind, nightPm25: n0Pm,
-            sunrise: parseDate(wx.daily.sunrise.first ?? ""),
-            sunset: parseDate(wx.daily.sunset.first ?? ""),
+            sunrise: chosenSunrise,
+            sunset: chosenSunset,
             moonIllum: moonNow.fraction, moonPhase: moonNow.phase,
             moonAltitude: moonPos.altitude,
             moonName: ScoreCalculator.moonPhaseName(phase: moonNow.phase),
-            forecast: forecast, updatedAt: now)
+            moonrise: moonRS.rise,
+            moonset: moonRS.set,
+            forecast: forecast,
+            updatedAt: now)
     }
 
     // ── 유틸 ──────────────────────────────────────────────

@@ -62,6 +62,8 @@ struct StargazingData {
     var moonPhase: Double
     var moonAltitude: Double
     var moonName: String
+    var moonrise: Date?
+    var moonset: Date?
     var forecast: [DayForecast]
     var updatedAt: Date
 }

@@ -13,11 +13,15 @@ struct DetailGridView: View {
 
     var body: some View {
         LazyVGrid(columns: cols, spacing: 12) {
-            DetailCard(label: "일출 · 일몰", icon: "sunrise.fill") {
-                Text(hhmm(data.sunrise)).detailValue()
-                Text("일몰 \(hhmm(data.sunset))").detailSub()
+            DetailCard(label: "일몰", icon: "sunset.fill") {
+                Text(hhmm(data.sunset)).detailValue()
+                Text("일출 \(hhmm(data.sunrise))").detailSub()
             }
-            DetailCard(label: "달 위상", icon: "moon.fill") {
+            DetailCard(label: "월출", icon: "moon.fill") {
+                Text(data.moonrise.map(hhmm) ?? "—").detailValue()
+                Text("월몰 \(data.moonset.map(hhmm) ?? "—")").detailSub()
+            }
+            DetailCard(label: "달 위상", icon: "moonphase.waxing.crescent") {
                 HStack(spacing: 12) {
                     MoonView(illumination: data.moonIllum, waxing: data.moonPhase < 0.5, size: 46)
                         .frame(width: 46, height: 46)
@@ -26,10 +30,6 @@ struct DetailGridView: View {
                         Text(data.moonName).detailSub()
                     }
                 }
-            }
-            DetailCard(label: "기온", icon: "thermometer.medium") {
-                Text("\(Int(data.temperature.rounded()))°").detailValue()
-                Text("지금").detailSub()
             }
             DetailCard(label: "운량", icon: "cloud.fill") {
                 Text("\(Int(data.nightCloud.rounded()))%").detailValue()
@@ -89,6 +89,7 @@ struct DetailCard<Content: View>: View {
                         Color.black
                             .opacity(0.3)
                             .blendMode(.softLight)
+                            
                     }
                 }
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))

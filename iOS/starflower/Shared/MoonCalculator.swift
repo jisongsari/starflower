@@ -51,13 +51,54 @@ struct MoonCalculator {
 
     // ── 달 좌표 ───────────────────────────────────────────
     private static func moonCoords(_ d: Double) -> (ra: Double, dec: Double, dist: Double) {
-        let L = rad * (218.316 + 13.176396 * d)
-        let M = rad * (134.963 + 13.064993 * d)
-        let F = rad * (93.272  + 13.229350 * d)
-        let l = L + rad * 6.289 * sin(M)
-        let b = rad * 5.128 * sin(F)
-        let dt = 385001 - 20905 * cos(M)
-        return (rightAscension(l, b), declination(l, b), dt)
+        // 기본 인수
+        let L = rad * (218.316 + 13.176396 * d)   // 평균 황경
+        let M = rad * (134.963 + 13.064993 * d)   // 평균 근점 이각
+        let F = rad * (93.272  + 13.229350 * d)   // 위도 인수
+        let D = rad * (297.850 + 12.190749 * d)   // 평균 이각 (태양-달)
+        let Ms = rad * (357.529 + 0.985600 * d)   // 태양 평균 근점 이각
+
+        // 황경 섭동 (주요 항 추가)
+        let dL = rad * (
+              6.289 * sin(M)
+            - 1.274 * sin(2*D - M)          // evection
+            + 0.658 * sin(2*D)              // variation
+            - 0.186 * sin(Ms)               // 연주 방정식
+            - 0.059 * sin(2*M - 2*D)
+            - 0.057 * sin(M - 2*D + Ms)
+            + 0.053 * sin(M + 2*D)
+            + 0.046 * sin(2*D - Ms)
+            + 0.041 * sin(M - Ms)
+            - 0.035 * sin(D)
+            - 0.031 * sin(M + Ms)
+            - 0.015 * sin(2*F - 2*D)
+            + 0.011 * sin(M - 4*D)
+        )
+        // 황위 섭동
+        let dB = rad * (
+              5.128 * sin(F)
+            + 0.280 * sin(M + F)
+            + 0.277 * sin(M - F)
+            + 0.173 * sin(2*D - F)
+            + 0.055 * sin(2*D - M + F)
+            + 0.046 * sin(2*D - M - F)
+            - 0.046 * sin(2*D + F)
+            + 0.030 * sin(M + 2*D - F)
+        )
+        // 거리 섭동 (km)
+        let dist = 385001
+            - 20905 * cos(M)
+            - 3699  * cos(2*D - M)
+            - 2956  * cos(2*D)
+            + 570   * cos(2*M)
+            - 246   * cos(2*M - 2*D)
+            + 205   * cos(Ms - 2*D)
+            + 171   * cos(M + 2*D)
+
+        let l = L + dL
+        let b = dB
+
+        return (rightAscension(l, b), declination(l, b), Double(dist))
     }
 
     // ── 달 위상 (SunCalc.getMoonIllumination) ─────────────
@@ -139,5 +180,77 @@ struct MoonCalculator {
         let c   = sunCoords(d)
         let H   = siderealTime(d, lw) - c.ra
         return altitude(H, phi, c.dec)
+    }
+    
+    // ── 월출·월몰 (고도가 0을 교차하는 시각 탐색) ──────────
+    // 기준 시각부터 24시간 내, 10분 간격으로 부호 변화 탐색
+    // ── 월출·월몰 (기준일 기반, 익일 보완 포함) ──────────────
+    // referenceDate: 계산 기준이 되는 날짜 (0~6시엔 전일을 넘겨야 함)
+    static func moonRiseSet(
+        referenceDate: Date,
+        lat: Double,
+        lng: Double
+    ) -> (rise: Date?, set: Date?) {
+        let cal = Calendar.current
+        // 기준일 00:00 ~ 24:00
+        let startOfDay = cal.startOfDay(for: referenceDate)
+        let endOfDay   = startOfDay.addingTimeInterval(24 * 3600)
+
+        var rise: Date?, set: Date?
+        let step: TimeInterval = 60
+        var t = startOfDay.timeIntervalSince1970
+        var prevAlt = position(date: Date(timeIntervalSince1970: t), lat: lat, lng: lng).altitude
+
+        while t < endOfDay.timeIntervalSince1970 {
+            t += step
+            let d = Date(timeIntervalSince1970: t)
+            let alt = position(date: d, lat: lat, lng: lng).altitude
+            if prevAlt < 0 && alt >= 0 && rise == nil { rise = d }
+            if prevAlt >= 0 && alt < 0 && set  == nil { set  = d }
+            prevAlt = alt
+        }
+
+        // 익일 보완 검색
+        func nextDaySearch(from searchStart: Date) -> (rise: Date?, set: Date?) {
+            var nr: Date?, ns: Date?
+            var t2 = searchStart.timeIntervalSince1970
+            var prev = position(date: Date(timeIntervalSince1970: t2), lat: lat, lng: lng).altitude
+            let limit = t2 + 26 * 3600
+            while t2 < limit {
+                t2 += step
+                let d = Date(timeIntervalSince1970: t2)
+                let a = position(date: d, lat: lat, lng: lng).altitude
+                if prev < 0 && a >= 0 && nr == nil { nr = d }
+                if prev >= 0 && a < 0  && ns == nil { ns = d }
+                if nr != nil && ns != nil { break }
+                prev = a
+            }
+            return (nr, ns)
+        }
+
+        // 둘 다 있으면
+        if let r = rise, let s = set {
+            if r < s {
+                // 월출이 월몰보다 빠름 → 그대로 사용
+                return (r, s)
+            } else {
+                // 월몰이 월출보다 빠름 → 월몰을 익일로 교체
+                let next = nextDaySearch(from: endOfDay)
+                return (r, next.set)
+            }
+        }
+        // 월출만 있음 → 월몰을 익일에서 찾기
+        if let r = rise, set == nil {
+            let next = nextDaySearch(from: endOfDay)
+            return (r, next.set)
+        }
+        // 월몰만 있음 → 월출을 익일에서 찾기
+        if rise == nil, let s = set {
+            let next = nextDaySearch(from: endOfDay)
+            return (next.rise, s)
+        }
+        // 둘 다 없음 → 익일에서 둘 다 찾기
+        let next = nextDaySearch(from: endOfDay)
+        return (next.rise, next.set)
     }
 }
