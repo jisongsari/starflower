@@ -241,15 +241,74 @@ struct Provider: TimelineProvider {
 }
 
 // ── 위젯 등록 ─────────────────────────────────────────────
-struct StarflowerWidget: Widget {
-    let kind = "StarflowerWidget"
-
+struct StarflowerSmallWidget: Widget {
+    let kind = "StarflowerSmallWidget"
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             WidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("별바라기")
-        .description("오늘 밤 관측 지수")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .configurationDisplayName("오늘 밤 관측 지수")
+        .description("2x2")
+        .supportedFamilies([.systemSmall])
+    }
+}
+
+struct StarflowerMediumWidget: Widget {
+    let kind = "StarflowerMediumWidget"
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+            WidgetEntryView(entry: entry)
+        }
+        .configurationDisplayName("오늘 밤 관측 지수")
+        .description("4x2")
+        .supportedFamilies([.systemMedium])
+    }
+}
+
+struct StarflowerCircularWidget: Widget {
+    let kind = "StarflowerCircularWidget"
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+            CircularWidgetView(entry: entry)
+        }
+        .configurationDisplayName("오늘 밤 관측 지수")
+        .description("간략히 보기")
+        .supportedFamilies([.accessoryCircular])
+    }
+}
+
+struct StarflowerRectangularWidget: Widget {
+    let kind = "StarflowerRectangularWidget"
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+            RectangularWidgetView(entry: entry)
+        }
+        .configurationDisplayName("오늘 밤 관측 지수")
+        .description("자세히 보기")
+        .supportedFamilies([.accessoryRectangular])
+    }
+}
+
+struct StarflowerMoonWidget: Widget {
+    let kind = "StarflowerMoonWidget"
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+            MoonCircularWidgetView(entry: entry)
+        }
+        .configurationDisplayName("달")
+        .description("달 위상")
+        .supportedFamilies([.accessoryCircular])
+    }
+}
+
+struct StarflowerSunWidget: Widget {
+    let kind = "StarflowerSunWidget"
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+            SunCircularWidgetView(entry: entry)
+        }
+        .configurationDisplayName("해")
+        .description("일출·일몰 시각")
+        .supportedFamilies([.accessoryCircular])
     }
 }

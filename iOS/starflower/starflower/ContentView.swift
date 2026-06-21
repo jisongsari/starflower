@@ -16,9 +16,11 @@ struct ContentView: View {
                 SkyBackgroundView(condition: d.condition, daypart: d.daypart,
                                   moonIllum: d.moonIllum, moonPhase: d.moonPhase,
                                   moonAltitude: d.moonAltitude)
+                .ignoresSafeArea()
             } else {
                 SkyBackgroundView(condition: .clear, daypart: .night,
                                   moonIllum: 0.5, moonPhase: 0.25, moonAltitude: 0.5)
+                .ignoresSafeArea()
             }
 
             ScrollView {
@@ -55,7 +57,7 @@ struct ContentView: View {
                     }
                 }
                 .padding(.horizontal, 18)
-                .padding(.top, 100)
+                .padding(.top, 41)
             }
 
             VStack {
@@ -88,11 +90,12 @@ struct ContentView: View {
                         }
                     }
                 }
-                .padding(.horizontal, 20).padding(.top, 56)
+                .padding(.horizontal, 20)
+                .padding(.top, -17)
                 Spacer()
             }
+            .safeAreaPadding(.top)
         }
-        .ignoresSafeArea()
         .preferredColorScheme(.dark)
         .sheet(isPresented: $vm.showSearch) {
             SearchView(onSelect: vm.selectLocation, dismissable: vm.savedLocation != nil)

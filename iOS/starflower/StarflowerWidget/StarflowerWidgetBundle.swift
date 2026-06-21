@@ -11,7 +11,12 @@ import SwiftUI
 @main
 struct StarflowerWidgetBundle: WidgetBundle {
     var body: some Widget {
-        StarflowerWidget()
+        StarflowerSmallWidget()
+        StarflowerMediumWidget()
+        StarflowerCircularWidget()
+        StarflowerRectangularWidget()
+        StarflowerMoonWidget()
+        StarflowerSunWidget()
         StarflowerWidgetControl()
         StarflowerWidgetLiveActivity()
     }

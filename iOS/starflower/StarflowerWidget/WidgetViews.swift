@@ -241,7 +241,7 @@ struct MediumWidgetView: View {
         }
         .containerBackground(for: .widget) { WidgetSky(entry: entry) }
     }
-
+    
     private func metric(_ label: String, _ value: String) -> some View {
         VStack(spacing: 2) {
             Text(label).font(.system(size: 9)).foregroundStyle(.white.opacity(0.55))
@@ -250,4 +250,250 @@ struct MediumWidgetView: View {
                 .foregroundStyle(.white).lineLimit(1).minimumScaleFactor(0.6)
         }
     }
+}
+
+// ── 잠금화면 원형 (점수) ──────────────────────────────────
+struct CircularWidgetView: View {
+    let entry: StargazingEntry
+    var body: some View {
+        ZStack {
+            VStack(spacing: 0) {
+                HStack(alignment: .top, spacing: 0) {
+                    Text("\(entry.score)")
+                        .font(.system(size: 40, weight: .thin))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                    Text("%")
+                        .font(.system(size: 14, weight: .light))
+                        .foregroundStyle(.white.opacity(0.75))
+                        .padding(.top, 6)
+                }
+                Text(entry.locationName)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.7))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+            }
+        }
+        .containerBackground(for: .widget) { Color.clear }
+    }
+}
+
+// ── 잠금화면 직사각형 ──────────────────────────────────────
+struct RectangularWidgetView: View {
+    let entry: StargazingEntry
+    var body: some View {
+        VStack(alignment: .center, spacing: 0) {
+            // 윗줄: 점수 + 동네·날씨
+            HStack(alignment: .center, spacing: 8) {
+                HStack(alignment: .top, spacing: 1) {
+                    Text("\(entry.score)")
+                        .font(.system(size: 40, weight: .thin))
+                        .foregroundStyle(.white)
+                        .minimumScaleFactor(0.9)
+                        .padding(.vertical, -3)
+                    Text("%")
+                        .font(.system(size: 13, weight: .light))
+                        .foregroundStyle(.white.opacity(0.75))
+                        .offset(y: 4.5)
+                }
+                .fixedSize()
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(entry.locationName)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                    HStack(spacing: 3) {
+                        Image(systemName: symbol(entry.condition))
+                            .font(.system(size: 11))
+                            .foregroundStyle(.white.opacity(0.75))
+                            .minimumScaleFactor(0.8)
+                        Text("기온 \(Int(entry.temperature.rounded()))°")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.white.opacity(0.75))
+                            .minimumScaleFactor(0.8)
+                    }
+                }
+            }
+            // 아랫줄: 한줄평
+            Text(ScoreCalculator.verdict(for: entry.score))
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(.white.opacity(0.8))
+                .lineLimit(1)
+                .minimumScaleFactor(1)
+                .frame(maxWidth: .infinity, alignment: .center)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .containerBackground(for: .widget) { Color.clear }
+    }
+}
+
+// ── 잠금화면 원형 (달 위상) ───────────────────────────────
+struct MoonCircularWidgetView: View {
+    let entry: StargazingEntry
+    var body: some View {
+        ZStack {
+            VStack(spacing: 5) {
+                MoonLockView(
+                    illumination: entry.moonIllum,
+                    waxing: entry.moonPhase < 0.5,
+                    size: 38
+                )
+                Text(entry.moonName)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.7))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+            }
+            //.padding(.top, 3)
+        }
+        .containerBackground(for: .widget) { Color.clear }
+    }
+}
+
+// ── 잠금화면 원형 (일출·일몰) ─────────────────────────────
+struct SunCircularWidgetView: View {
+    let entry: StargazingEntry
+    var body: some View {
+        VStack(spacing: 0) {
+            Text("일몰")
+                .font(.system(size: 9, weight: .medium))
+                .foregroundStyle(.white.opacity(0.6))
+            Text(hhmm(entry.sunset))
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.white)
+            Text("일출")
+                .font(.system(size: 9, weight: .medium))
+                .foregroundStyle(.white.opacity(0.6))
+                .padding(.top, 2)
+            Text(hhmm(entry.sunrise))
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.white)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        .containerBackground(for: .widget) { Color.clear }
+    }
+}
+
+// ── 잠금화면용 달 그림 ────────────────────────────────────
+struct MoonLockView: View {
+    let illumination: Double
+    let waxing: Bool
+    let size: CGFloat
+
+    var body: some View {
+        Canvas { ctx, cs in
+            let R = size * 0.46
+            let cx = cs.width / 2, cy = cs.height / 2
+            let illum = min(max(illumination, 0), 1)
+            let moon = Path(ellipseIn: CGRect(x: cx-R, y: cy-R, width: R*2, height: R*2))
+
+            // 달무리
+            let glowR = R + 8
+            ctx.fill(
+                Path(ellipseIn: CGRect(x: cx-glowR, y: cy-glowR, width: glowR*2, height: glowR*2)),
+                with: .radialGradient(
+                    Gradient(colors: [.white.opacity(0.12), .white.opacity(0)]),
+                    center: CGPoint(x: cx, y: cy), startRadius: R, endRadius: glowR)
+            )
+
+            // 어두운 면
+            ctx.fill(moon, with: .color(.white.opacity(0.13)))
+
+            // 밝은 면
+            let lit = litPath(cx: cx, cy: cy, R: R, illum: illum, waxing: waxing)
+            ctx.fill(lit, with: .color(.white))
+
+            // 바다 질감
+            ctx.clipToLayer(options: []) { $0.fill(lit, with: .color(.white)) }
+            ctx.fill(Path(ellipseIn: CGRect(x: cx-R*0.30, y: cy-R*0.30, width: R*0.26, height: R*0.20)),
+                     with: .color(.black.opacity(0.07)))
+            ctx.fill(Path(ellipseIn: CGRect(x: cx+R*0.05, y: cy+R*0.10, width: R*0.18, height: R*0.14)),
+                     with: .color(.black.opacity(0.06)))
+        }
+        .frame(width: size, height: size)
+    }
+
+    private func litPath(cx: CGFloat, cy: CGFloat, R: CGFloat, illum: CGFloat, waxing: Bool) -> Path {
+        let k = 1 - 2 * illum   // -1~1: +면 초승(패임), -면 보름(볼록)
+
+        var unit = Path()
+        // 바깥 반원: 위(-90°) → 아래(90°)
+        unit.move(to: CGPoint(x: 0, y: -1))
+        unit.addArc(center: .zero, radius: 1,
+                    startAngle: .degrees(-90), endAngle: .degrees(90),
+                    clockwise: !waxing)
+
+        // 터미네이터 반원: 아래(90°) → 위(270°), 방향 고정
+        // 이 호를 x축으로 k배 스케일하면 타원호가 되고,
+        // k 부호가 패임/볼록을 자동 결정 (음수면 거울처럼 반대로 휨)
+        var term = Path()
+        term.move(to: CGPoint(x: 0, y: 1))
+        term.addArc(center: .zero, radius: 1,
+                    startAngle: .degrees(90), endAngle: .degrees(270),
+                    clockwise: !waxing)
+        let sx = (abs(k) < 0.0015 ? 0.0015 : -k)
+        unit.addPath(term.applying(CGAffineTransform(scaleX: sx, y: 1)))
+        unit.closeSubpath()
+
+        return unit.applying(CGAffineTransform(a: R, b: 0, c: 0, d: R, tx: cx, ty: cy))
+    }
+}
+
+let locName = "제주특별자치도도도"
+let scor = 100
+
+#Preview("작은거", as: .accessoryRectangular) {
+    StarflowerCircularWidget()
+} timeline: {
+    StargazingEntry(
+        date: .now, score: scor, locationName: locName,
+        condition: .clear, daypart: .night,
+        moonIllum: 0.3, moonPhase: 0.2, moonAltitude: 0.5,
+        temperature: 12, pressure: 1013,
+        nightCloud: 10, nightHumidity: 45, nightWind: 2.0, nightPm25: 15,
+        sunrise: .now, sunset: .now, moonName: "초승달",
+        moonrise: nil, moonset: nil
+    )
+}
+#Preview("긴거", as: .accessoryRectangular) {
+    StarflowerRectangularWidget()
+} timeline: {
+    StargazingEntry(
+        date: .now, score: scor, locationName: locName,
+        condition: .clear, daypart: .night,
+        moonIllum: 0.3, moonPhase: 0.2, moonAltitude: 0.5,
+        temperature: 12, pressure: 1013,
+        nightCloud: 10, nightHumidity: 45, nightWind: 2.0, nightPm25: 15,
+        sunrise: .now, sunset: .now, moonName: "초승달",
+        moonrise: nil, moonset: nil
+    )
+}
+#Preview("달", as: .accessoryRectangular) {
+    StarflowerMoonWidget()
+} timeline: {
+    StargazingEntry(
+        date: .now, score: scor, locationName: locName,
+        condition: .clear, daypart: .night,
+        moonIllum: 0.7, moonPhase: 0.1, moonAltitude: 0.5,
+        temperature: 12, pressure: 1013,
+        nightCloud: 10, nightHumidity: 45, nightWind: 2.0, nightPm25: 15,
+        sunrise: .now, sunset: .now, moonName: "상현망간의 달",
+        moonrise: nil, moonset: nil
+    )
+}
+#Preview("해", as: .accessoryRectangular) {
+    StarflowerSunWidget()
+} timeline: {
+    StargazingEntry(
+        date: .now, score: scor, locationName: locName,
+        condition: .clear, daypart: .night,
+        moonIllum: 0.3, moonPhase: 0.2, moonAltitude: 0.5,
+        temperature: 12, pressure: 1013,
+        nightCloud: 10, nightHumidity: 45, nightWind: 2.0, nightPm25: 15,
+        sunrise: .now, sunset: .now, moonName: "초승달",
+        moonrise: nil, moonset: nil
+    )
 }
