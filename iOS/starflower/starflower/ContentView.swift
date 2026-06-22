@@ -53,11 +53,14 @@ struct ContentView: View {
                         DetailGridView(data: d)
                         Text(footer(d)).font(.system(size: 12))
                             .foregroundStyle(.white.opacity(0.45))
-                            .padding(.top, 6).padding(.bottom, 40)
+                            .padding(.top, 6).padding(.bottom, 25)
                     }
                 }
                 .padding(.horizontal, 18)
                 .padding(.top, 41)
+            }
+            .refreshable {
+                await vm.loadData()
             }
 
             VStack {
