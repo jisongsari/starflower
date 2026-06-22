@@ -42,6 +42,7 @@
 		C1922D712FE523D300931906 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		C1922D732FE523D400931906 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		C1922D8A2FE5244800931906 /* StarflowerWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StarflowerWidgetExtension.entitlements; sourceTree = "<group>"; };
+		C19E96762FE96BBF0051CB60 /* starflowermac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = starflowermac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -49,6 +50,40 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+			);
+			target = C1922D6E2FE523D300931906 /* StarflowerWidgetExtension */;
+		};
+		C19E96D12FE980210051CB60 /* Exceptions for "Shared" folder in "starflowermac" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CloudView.swift,
+				"Color+Hex.swift",
+				DetailGridView.swift,
+				ForecastView.swift,
+				GeoService.swift,
+				MoonCalculator.swift,
+				MoonView.swift,
+				ScoreCalculator.swift,
+				ScoreHeroView.swift,
+				SearchView.swift,
+				SkyBackgroundView.swift,
+				SkyCondition.swift,
+				SkyTheme.swift,
+				StarfieldView.swift,
+				StargazingModels.swift,
+				WeatherService.swift,
+			);
+			target = C19E96752FE96BBF0051CB60 /* starflowermac */;
+		};
+		C19E96D82FE980480051CB60 /* Exceptions for "Shared" folder in "StarflowerWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				DetailGridView.swift,
+				ForecastView.swift,
+				GeoService.swift,
+				ScoreHeroView.swift,
+				SearchView.swift,
+				SkyBackgroundView.swift,
 			);
 			target = C1922D6E2FE523D300931906 /* StarflowerWidgetExtension */;
 		};
@@ -70,7 +105,16 @@
 		};
 		C1922D8D2FE524CD00931906 /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C19E96D82FE980480051CB60 /* Exceptions for "Shared" folder in "StarflowerWidgetExtension" target */,
+				C19E96D12FE980210051CB60 /* Exceptions for "Shared" folder in "starflowermac" target */,
+			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		C19E96772FE96BBF0051CB60 /* starflowermac */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = starflowermac;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -92,6 +136,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C19E96732FE96BBF0051CB60 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -102,6 +153,7 @@
 				C1922D8D2FE524CD00931906 /* Shared */,
 				C1922D5F2FE516B900931906 /* starflower */,
 				C1922D752FE523D400931906 /* StarflowerWidget */,
+				C19E96772FE96BBF0051CB60 /* starflowermac */,
 				C1922D702FE523D300931906 /* Frameworks */,
 				C1922D5E2FE516B900931906 /* Products */,
 			);
@@ -112,6 +164,7 @@
 			children = (
 				C1922D5D2FE516B900931906 /* starflower.app */,
 				C1922D6F2FE523D300931906 /* StarflowerWidgetExtension.appex */,
+				C19E96762FE96BBF0051CB60 /* starflowermac.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -176,6 +229,28 @@
 			productReference = C1922D6F2FE523D300931906 /* StarflowerWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		C19E96752FE96BBF0051CB60 /* starflowermac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C19E96802FE96BC00051CB60 /* Build configuration list for PBXNativeTarget "starflowermac" */;
+			buildPhases = (
+				C19E96722FE96BBF0051CB60 /* Sources */,
+				C19E96732FE96BBF0051CB60 /* Frameworks */,
+				C19E96742FE96BBF0051CB60 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C19E96772FE96BBF0051CB60 /* starflowermac */,
+			);
+			name = starflowermac;
+			packageProductDependencies = (
+			);
+			productName = starflowermac;
+			productReference = C19E96762FE96BBF0051CB60 /* starflowermac.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -190,6 +265,9 @@
 						CreatedOnToolsVersion = 26.5;
 					};
 					C1922D6E2FE523D300931906 = {
+						CreatedOnToolsVersion = 26.5;
+					};
+					C19E96752FE96BBF0051CB60 = {
 						CreatedOnToolsVersion = 26.5;
 					};
 				};
@@ -210,6 +288,7 @@
 			targets = (
 				C1922D5C2FE516B900931906 /* starflower */,
 				C1922D6E2FE523D300931906 /* StarflowerWidgetExtension */,
+				C19E96752FE96BBF0051CB60 /* starflowermac */,
 			);
 		};
 /* End PBXProject section */
@@ -229,6 +308,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C19E96742FE96BBF0051CB60 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -240,6 +326,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C1922D6B2FE523D300931906 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C19E96722FE96BBF0051CB60 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -312,6 +405,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -370,6 +464,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -406,6 +501,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.songsari.starflower;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -443,6 +541,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.songsari.starflower;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -476,6 +577,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
@@ -508,11 +612,108 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C19E967E2FE96BC00051CB60 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = icon_lg;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1000;
+				DEVELOPMENT_TEAM = WXHWL88Z7P;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "별바라기";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0.00;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songsari.starflower;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C19E967F2FE96BC00051CB60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = icon_lg;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1000;
+				DEVELOPMENT_TEAM = WXHWL88Z7P;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "별바라기";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0.00;
+				PRODUCT_BUNDLE_IDENTIFIER = com.songsari.starflower;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -542,6 +743,15 @@
 			buildConfigurations = (
 				C1922D862FE523D500931906 /* Debug */,
 				C1922D872FE523D500931906 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C19E96802FE96BC00051CB60 /* Build configuration list for PBXNativeTarget "starflowermac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C19E967E2FE96BC00051CB60 /* Debug */,
+				C19E967F2FE96BC00051CB60 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
