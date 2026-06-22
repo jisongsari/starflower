@@ -9,10 +9,10 @@ export default function Clouds({ opacity, tint }: CloudsProps) {
   if (opacity <= 0.03) return null;
 
   const blobs = [
-    { top: "6%", size: 360, dur: 70, delay: 0, o: 0.9 },
-    { top: "16%", size: 280, dur: 95, delay: -30, o: 0.7 },
-    { top: "30%", size: 420, dur: 120, delay: -60, o: 0.55 },
-    { top: "2%", size: 240, dur: 85, delay: -15, o: 0.6 },
+    { top: "6%", size: 460, dur: 70, delay: 0, o: 0.9 },
+    { top: "16%", size: 360, dur: 95, delay: -30, o: 0.7 },
+    { top: "30%", size: 540, dur: 120, delay: -60, o: 0.55 },
+    { top: "2%", size: 320, dur: 85, delay: -15, o: 0.6 },
   ];
 
   return (

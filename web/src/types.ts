@@ -74,6 +74,8 @@ export interface StargazingData {
   sunrise: Date;
   sunset: Date;
   // 달
+  moonrise: Date | null;
+  moonset: Date | null;
   moonIllum: number;
   moonPhase: number; // 0~1 (0/1=삭, 0.5=망)
   moonAltitude: number; // 라디안, 배경 표시용

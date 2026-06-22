@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import type { StargazingData } from "../types";
 import Moon from "./Moon";
 
-function hhmm(d: Date): string {
+function hhmm(d: Date | null): string {
+  if (!d) return "—";
   const h = d.getHours();
   const m = d.getMinutes();
   return `${h < 10 ? "0" + h : h}:${m < 10 ? "0" + m : m}`;
@@ -42,11 +43,16 @@ export default function DetailGrid({ data }: { data: StargazingData }) {
   return (
     <section className="detail-grid">
       <DetailCard
-        icon={ic("M12 3v2M5 12H3m4.5-6.5L6 4m12 1.5L18 4M4 18h16M7 18a5 5 0 0 1 10 0")}
-        label="일출 · 일몰"
+        icon={ic("M3 18h18M12 2v3M5.6 9.6 4 8m14.4 1.6L20 8M8 18a4 4 0 0 1 8 0")}
+        label="일몰"
       >
-        <div className="detail-value">{hhmm(data.sunrise)}</div>
-        <div className="detail-sub">일몰 {hhmm(data.sunset)}</div>
+        <div className="detail-value">{hhmm(data.sunset)}</div>
+        <div className="detail-sub">일출 {hhmm(data.sunrise)}</div>
+      </DetailCard>
+
+      <DetailCard icon={ic("M12 3a6 6 0 1 0 6 9 8 8 0 1 1-6-9Z")} label="월출">
+        <div className="detail-value">{hhmm(data.moonrise)}</div>
+        <div className="detail-sub">월몰 {hhmm(data.moonset)}</div>
       </DetailCard>
 
       <DetailCard icon={ic("M12 3a6 6 0 1 0 6 9 8 8 0 1 1-6-9Z")} label="달 위상">
@@ -57,11 +63,6 @@ export default function DetailGrid({ data }: { data: StargazingData }) {
             <div className="detail-sub moon-name">{data.moonName}</div>
           </div>
         </div>
-      </DetailCard>
-
-      <DetailCard icon={ic("M12 3v11m0 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z")} label="기온">
-        <div className="detail-value">{data.temperature}°</div>
-        <div className="detail-sub">지금</div>
       </DetailCard>
 
       <DetailCard icon={ic("M6 16a4 4 0 0 1 .5-7.97A5 5 0 0 1 16 8a3.5 3.5 0 0 1 .5 7H6Z")} label="운량">

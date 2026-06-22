@@ -7,7 +7,7 @@ import type {
 import { fetchWeather, fetchAir, type RawWeather, type RawAir } from "../api/openMeteo";
 import { computeScore } from "../lib/score";
 import { classifySky } from "../lib/theme";
-import { getMoonState, getSunAltitude, moonExposureOverNight, moonPhaseName } from "../lib/moon";
+import { getMoonState, getSunAltitude, moonExposureOverNight, moonPhaseName, getMoonRiseSet } from "../lib/moon";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -129,6 +129,9 @@ function buildData(
 
   // 현재 달 위치
   const moonNow = getMoonState(now, lat, lng);
+  // 월출·월몰: 0~6시면 전일 기준, 그 외 오늘 기준
+  const moonRefDate = now.getHours() < 6 ? addDays(now, -1) : now;
+  const { rise: moonrise, set: moonset } = getMoonRiseSet(moonRefDate, lat, lng);
   // 배경 하늘 상태는 "오늘 밤" 기준(점수·문구와 일치). 밝기(낮/밤)만 현재 시각 기준.
   const condition = forecast[0]?.condition ?? classifySky(cur.weather_code, cur.cloud_cover);
 
@@ -163,6 +166,8 @@ function buildData(
     nightPm25: Math.round(night0?.pm25 ?? 0),
     sunrise: new Date(weather.daily.sunrise[0]),
     sunset: new Date(weather.daily.sunset[0]),
+    moonrise,
+    moonset,
     moonIllum: moonNow.illumination,
     moonPhase: moonNow.phase,
     moonAltitude: moonNow.altitude,
@@ -187,6 +192,7 @@ export function useStargazingData(location: SavedLocation | null) {
   const load = useCallback(async () => {
     if (!location) return;
     setLoading(true);
+    setData(null);
     setError(null);
     try {
       const [weather, air] = await Promise.all([

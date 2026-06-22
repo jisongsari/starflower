@@ -46,12 +46,50 @@ export function getSunAltitude(date: Date, lat: number, lng: number): number {
 // 위상 이름 (한국어)
 export function moonPhaseName(phase: number): string {
   const p = ((phase % 1) + 1) % 1;
-  if (p < 0.03 || p > 0.97) return "삭 (그믐)";
+  if (p < 0.03 || p > 0.97) return "그믐달";
   if (p < 0.22) return "초승달";
   if (p < 0.28) return "상현달";
-  if (p < 0.47) return "차오르는 달";
+  if (p < 0.47) return "상현망간의 달";
   if (p < 0.53) return "보름달";
-  if (p < 0.72) return "기우는 달";
+  if (p < 0.72) return "하현망간의 달";
   if (p < 0.78) return "하현달";
   return "그믐달";
+}
+
+// 월출·월몰 (기준일 기반, iOS와 동일한 판단 로직)
+export function getMoonRiseSet(
+  referenceDate: Date,
+  lat: number,
+  lng: number
+): { rise: Date | null; set: Date | null } {
+  const dayStart = new Date(referenceDate);
+  dayStart.setHours(0, 0, 0, 0);
+
+  const t = SunCalc.getMoonTimes(dayStart, lat, lng);
+  const rise: Date | null = t.rise ?? null;
+  const set: Date | null = t.set ?? null;
+
+  // 익일 탐색
+  const nextStart = new Date(dayStart);
+  nextStart.setDate(nextStart.getDate() + 1);
+  const tn = SunCalc.getMoonTimes(nextStart, lat, lng);
+  const nextRise: Date | null = tn.rise ?? null;
+  const nextSet: Date | null = tn.set ?? null;
+
+  // 둘 다 있음
+  if (rise && set) {
+    if (rise < set) {
+      // 월출이 더 빠름 → 그대로 사용
+      return { rise, set };
+    } else {
+      // 월몰이 더 빠름 → 월몰을 익일로
+      return { rise, set: nextSet };
+    }
+  }
+  // 월출만 있음 → 월몰을 익일에서
+  if (rise && !set) return { rise, set: nextSet };
+  // 월몰만 있음 → 월출을 익일에서
+  if (!rise && set) return { rise: nextRise, set };
+  // 둘 다 없음 → 익일에서 둘 다
+  return { rise: nextRise, set: nextSet };
 }

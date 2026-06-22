@@ -14,7 +14,7 @@ export default function ScoreHero({ score, condition, temperature }: ScoreHeroPr
 
   return (
     <div className="hero">
-      <div className="hero-eyebrow">오늘 밤 별보기 지수</div>
+      <div className="hero-eyebrow">오늘 밤 관측 지수</div>
       <div className="hero-score">
         <span className="hero-num" style={{ textShadow: `0 0 40px ${color}55` }}>
           {score}
