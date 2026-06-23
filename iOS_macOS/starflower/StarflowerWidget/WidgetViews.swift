@@ -193,7 +193,7 @@ struct MediumWidgetView: View {
                 // 오른쪽 (60%)
                 VStack(spacing: 10) {
                     // 달 + 월몰/월출
-                    HStack(spacing: 10) {
+                    HStack(spacing: 3) {
                         MoonView(illumination: entry.moonIllum, waxing: entry.moonPhase < 0.5, size: 36)
                             .frame(width: 36, height: 36)
                         VStack(alignment: .leading, spacing: 0) {
@@ -209,7 +209,7 @@ struct MediumWidgetView: View {
                                     .font(.system(size: 9))
                                     .foregroundStyle(.white.opacity(0.55))
                                 Text(hhmm(entry.moonrise))
-                                    .font(.system(size: 12, weight: .regular))
+                                    .font(.system(size: 12, weight: .medium))
                                     .foregroundStyle(.white)
                             }
                             HStack(spacing: 4) {
@@ -217,7 +217,7 @@ struct MediumWidgetView: View {
                                     .font(.system(size: 9))
                                     .foregroundStyle(.white.opacity(0.55))
                                 Text(hhmm(entry.moonset))
-                                    .font(.system(size: 12, weight: .regular))
+                                    .font(.system(size: 12, weight: .medium))
                                     .foregroundStyle(.white)
                             }
                         }
@@ -246,7 +246,7 @@ struct MediumWidgetView: View {
         VStack(spacing: 2) {
             Text(label).font(.system(size: 9)).foregroundStyle(.white.opacity(0.55))
                 .lineLimit(1).minimumScaleFactor(0.7)
-            Text(value).font(.system(size: 12, weight: .regular))
+            Text(value).font(.system(size: 12, weight: .medium))
                 .foregroundStyle(.white).lineLimit(1).minimumScaleFactor(0.6)
         }
     }
@@ -292,11 +292,11 @@ struct RectangularWidgetView: View {
                         .font(.system(size: 40, weight: .thin))
                         .foregroundStyle(.white)
                         .minimumScaleFactor(0.9)
-                        .padding(.vertical, -3)
+                        .padding(.vertical, -3.3)
                     Text("%")
                         .font(.system(size: 13, weight: .light))
                         .foregroundStyle(.white.opacity(0.75))
-                        .offset(y: 4.5)
+                        .offset(y: 4.2)
                 }
                 .fixedSize()
                 VStack(alignment: .leading, spacing: 2) {
@@ -339,7 +339,7 @@ struct MoonCircularWidgetView: View {
                 MoonLockView(
                     illumination: entry.moonIllum,
                     waxing: entry.moonPhase < 0.5,
-                    size: 38
+                    size: 35
                 )
                 Text(entry.moonName)
                     .font(.system(size: 13, weight: .medium))

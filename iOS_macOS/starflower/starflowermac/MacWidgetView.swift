@@ -37,7 +37,7 @@ struct MacWidgetView: View {
                         .lineLimit(1).minimumScaleFactor(0.7)
                 }
                 Spacer(minLength: 0)
-                Text("기온 \(Int(data.temperature.rounded()))°")
+                Text(hhmm(data.updatedAt))
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(.primary.opacity(0.5))
             }
@@ -57,12 +57,12 @@ struct MacWidgetView: View {
                     Spacer(minLength: 0)
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 4) {
-                            Text("월몰").font(.system(size: 9)).foregroundStyle(.primary.opacity(0.55))
-                            Text(hhmm(data.moonset)).font(.system(size: 11, weight: .semibold)).foregroundStyle(.primary)
+                            Text("월출").font(.system(size: 9)).foregroundStyle(.primary.opacity(0.55))
+                            Text(hhmm(data.moonrise)).font(.system(size: 11, weight: .medium)).foregroundStyle(.primary)
                         }
                         HStack(spacing: 4) {
-                            Text("월출").font(.system(size: 9)).foregroundStyle(.primary.opacity(0.55))
-                            Text(hhmm(data.moonrise)).font(.system(size: 11, weight: .semibold)).foregroundStyle(.primary)
+                            Text("월몰").font(.system(size: 9)).foregroundStyle(.primary.opacity(0.55))
+                            Text(hhmm(data.moonset)).font(.system(size: 11, weight: .medium)).foregroundStyle(.primary)
                         }
                     }
                 }
@@ -88,7 +88,7 @@ struct MacWidgetView: View {
         VStack(spacing: 1) {
             Text(label).font(.system(size: 9)).foregroundStyle(.primary.opacity(0.55))
                 .lineLimit(1).minimumScaleFactor(0.7)
-            Text(value).font(.system(size: 11, weight: .semibold))
+            Text(value).font(.system(size: 11, weight: .medium))
                 .foregroundStyle(.primary).lineLimit(1).minimumScaleFactor(0.6)
         }
     }
