@@ -17,6 +17,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             MainWindowController.shared.show(vm: SharedVM.instance)
         }
     }
+    // Dock 아이콘 클릭(앱 재오픈) 시 메인 창 표시
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        MainWindowController.shared.show(vm: SharedVM.instance)
+        return true
+    }
 }
 
 // vm을 앱 전역에서 공유 (App 구조체와 동일 인스턴스 사용)

@@ -14,6 +14,7 @@ final class MainWindowController: NSObject, NSWindowDelegate {
     private var window: NSWindow?
 
     func show(vm: MacViewModel) {
+        Task { await vm.loadData() }
         if let w = window {
             w.makeKeyAndOrderFront(nil)
             DockPolicy.showDock()
