@@ -193,7 +193,7 @@ struct MediumWidgetView: View {
                 // 오른쪽 (60%)
                 VStack(spacing: 10) {
                     // 달 + 월몰/월출
-                    HStack(spacing: 3) {
+                    HStack(spacing: 8) {
                         MoonView(illumination: entry.moonIllum, waxing: entry.moonPhase < 0.5, size: 36)
                             .frame(width: 36, height: 36)
                         VStack(alignment: .leading, spacing: 0) {

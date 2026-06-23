@@ -163,6 +163,11 @@ struct Provider: TimelineProvider {
             moonRefDate = cal.startOfDay(for: now)
         }
         let moonRS = MoonCalculator.moonRiseSet(referenceDate: moonRefDate, lat: lat, lng: lng)
+        let daily = wx.daily
+        let isEarly = hour < 6
+        let todayIdx = 1
+        let chosenSunset  = parseDate(daily.sunset[isEarly ? 0 : todayIdx])
+        let chosenSunrise = parseDate(daily.sunrise[isEarly ? todayIdx : min(todayIdx + 1, daily.sunrise.count - 1)])
 
         return StargazingEntry(
             date: now, score: score, locationName: name,
@@ -170,8 +175,8 @@ struct Provider: TimelineProvider {
             moonIllum: moonNow.fraction, moonPhase: moonNow.phase, moonAltitude: moonPos.altitude,
             temperature: cur.temperature2m, pressure: cur.surfacePressure,
             nightCloud: cloud, nightHumidity: hum, nightWind: wind, nightPm25: pm,
-            sunrise: parseDate(wx.daily.sunrise.first ?? ""),
-            sunset: parseDate(wx.daily.sunset.first ?? ""),
+            sunrise: chosenSunrise,
+            sunset: chosenSunset,
             moonName: ScoreCalculator.moonPhaseName(phase: moonNow.phase),
             moonrise: moonRS.rise,
             moonset:  moonRS.set)
