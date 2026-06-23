@@ -6,22 +6,42 @@
 //
 
 import AppKit
+import SwiftUI
+import ServiceManagement
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    // 시작 시 메뉴바 전용(.accessory): Dock 아이콘 숨김
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.setActivationPolicy(.accessory)
+        NSApp.setActivationPolicy(.regular)
+        // 최초 실행 시 메인 창 표시
+        DispatchQueue.main.async {
+            MainWindowController.shared.show(vm: SharedVM.instance)
+        }
     }
 }
 
+// vm을 앱 전역에서 공유 (App 구조체와 동일 인스턴스 사용)
+enum SharedVM {
+    static let instance = MacViewModel()
+}
+
 enum DockPolicy {
-    // 메인 윈도우가 열릴 때 Dock 표시
     static func showDock() {
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
     }
-    // 메인 윈도우가 닫힐 때 Dock 숨김
     static func hideDock() {
         NSApp.setActivationPolicy(.accessory)
+    }
+}
+
+enum LaunchAtLogin {
+    static var isEnabled: Bool {
+        get { SMAppService.mainApp.status == .enabled }
+        set {
+            do {
+                if newValue { try SMAppService.mainApp.register() }
+                else { try SMAppService.mainApp.unregister() }
+            } catch { print("로그인 항목 설정 실패: \(error)") }
+        }
     }
 }

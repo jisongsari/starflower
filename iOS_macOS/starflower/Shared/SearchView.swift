@@ -26,7 +26,10 @@ struct SearchView: View {
                     TextField("", text: $query, prompt: Text("수원시, 제주시, 광양시 ...")
                         .foregroundStyle(.white.opacity(0.5)))
                         .foregroundStyle(.white)
-                        .autocorrectionDisabled()//.textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        #if os(iOS)
+                        .textInputAutocapitalization(.never)
+                        #endif
                         .onChange(of: query) { _, v in Task { await runSearch(v) } }
                     if !query.isEmpty {
                         Button { query = ""; results = []; hint = nil } label: {

@@ -85,13 +85,13 @@ struct DetailCard<Content: View>: View {
         .padding(.init(top: 14, leading: 16, bottom: 16, trailing: 16))
         .frame(maxWidth: .infinity, minHeight: 84, alignment: .leading)
         .background {
-                    ZStack {
-                        Color.black
-                            .opacity(0.3)
-                            .blendMode(.softLight)
-                            
-                    }
+                ZStack {
+                    Color.black
+                        .opacity(0.3)
+                        .blendMode(.softLight)
+                        
                 }
+            }
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous)
             .stroke(.white.opacity(0.08), lineWidth: 1))

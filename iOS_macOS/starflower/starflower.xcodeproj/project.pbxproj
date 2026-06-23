@@ -42,7 +42,7 @@
 		C1922D712FE523D300931906 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		C1922D732FE523D400931906 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		C1922D8A2FE5244800931906 /* StarflowerWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StarflowerWidgetExtension.entitlements; sourceTree = "<group>"; };
-		C19E96762FE96BBF0051CB60 /* starflowermac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = starflowermac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C19E96762FE96BBF0051CB60 /* starflower.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = starflower.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -62,6 +62,7 @@
 				ForecastView.swift,
 				GeoService.swift,
 				MoonCalculator.swift,
+				MoonLockView.swift,
 				MoonView.swift,
 				ScoreCalculator.swift,
 				ScoreHeroView.swift,
@@ -87,6 +88,13 @@
 			);
 			target = C1922D6E2FE523D300931906 /* StarflowerWidgetExtension */;
 		};
+		C19E976C2FEA05000051CB60 /* Exceptions for "Shared" folder in "starflower" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				MoonLockView.swift,
+			);
+			target = C1922D5C2FE516B900931906 /* starflower */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -106,6 +114,7 @@
 		C1922D8D2FE524CD00931906 /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				C19E976C2FEA05000051CB60 /* Exceptions for "Shared" folder in "starflower" target */,
 				C19E96D82FE980480051CB60 /* Exceptions for "Shared" folder in "StarflowerWidgetExtension" target */,
 				C19E96D12FE980210051CB60 /* Exceptions for "Shared" folder in "starflowermac" target */,
 			);
@@ -164,7 +173,7 @@
 			children = (
 				C1922D5D2FE516B900931906 /* starflower.app */,
 				C1922D6F2FE523D300931906 /* StarflowerWidgetExtension.appex */,
-				C19E96762FE96BBF0051CB60 /* starflowermac.app */,
+				C19E96762FE96BBF0051CB60 /* starflower.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -248,7 +257,7 @@
 			packageProductDependencies = (
 			);
 			productName = starflowermac;
-			productReference = C19E96762FE96BBF0051CB60 /* starflowermac.app */;
+			productReference = C19E96762FE96BBF0051CB60 /* starflower.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -658,7 +667,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0.00;
 				PRODUCT_BUNDLE_IDENTIFIER = com.songsari.starflower;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = starflowermac;
+				PRODUCT_NAME = starflower;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = macosx;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -705,7 +715,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0.00;
 				PRODUCT_BUNDLE_IDENTIFIER = com.songsari.starflower;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = starflowermac;
+				PRODUCT_NAME = starflower;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = macosx;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
