@@ -66,7 +66,7 @@ struct DetailGridView: View {
     private func hhmm(_ d: Date) -> String {
         let f = DateFormatter(); f.dateFormat = "HH:mm"; return f.string(from: d)
     }
-    private func cloudLabel(_ v: Double) -> String { v < 30 ? "맑음" : v < 70 ? "구름 조금" : "구름 많음" }
+    private func cloudLabel(_ v: Double) -> String { v < 15 ? "맑음" : v < 50 ? "구름 조금" : v < 85 ? "구름 많음" : "흐림" }
     private func humLabel(_ v: Double) -> String { v < 50 ? "건조" : v < 75 ? "보통" : "습함" }
     private func windLabel(_ v: Double) -> String { v < 3 ? "잔잔" : v < 8 ? "약풍" : "강풍" }
 }

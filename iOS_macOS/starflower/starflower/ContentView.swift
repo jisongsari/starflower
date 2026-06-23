@@ -15,11 +15,12 @@ struct ContentView: View {
             if let d = vm.data {
                 SkyBackgroundView(condition: d.condition, daypart: d.daypart,
                                   moonIllum: d.moonIllum, moonPhase: d.moonPhase,
-                                  moonAltitude: d.moonAltitude)
+                                  moonAltitude: d.moonAltitude,
+                                  cloudCover: d.nightCloud)
                 .ignoresSafeArea()
             } else {
                 SkyBackgroundView(condition: .clear, daypart: .night,
-                                  moonIllum: 0.5, moonPhase: 0.25, moonAltitude: 0.5)
+                                  moonIllum: 0.5, moonPhase: 0.25, moonAltitude: 0.5, cloudCover: 0)
                 .ignoresSafeArea()
             }
 
