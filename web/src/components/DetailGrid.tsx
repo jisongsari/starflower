@@ -68,7 +68,7 @@ export default function DetailGrid({ data }: { data: StargazingData }) {
       <DetailCard icon={ic("M6 16a4 4 0 0 1 .5-7.97A5 5 0 0 1 16 8a3.5 3.5 0 0 1 .5 7H6Z")} label="운량">
         <div className="detail-value">{data.nightCloud}%</div>
         <div className="detail-sub">
-          오늘 밤 · {data.nightCloud < 30 ? "맑음" : data.nightCloud < 70 ? "구름 조금" : "구름 많음"}
+          오늘 밤 · {data.nightCloud < 15 ? "맑음" : data.nightCloud < 50 ? "구름 조금" : data.nightCloud < 85 ? "구름 많음" : "흐림"}
         </div>
       </DetailCard>
 
@@ -88,7 +88,7 @@ export default function DetailGrid({ data }: { data: StargazingData }) {
 
       <DetailCard icon={ic("M3 12h18M3 7h18M3 17h12")} label="기압">
         <div className="detail-value">{data.pressure}<span className="unit"> hPa</span></div>
-        <div className="detail-sub">지금 · 해면기압</div>
+        <div className="detail-sub">지금</div>
       </DetailCard>
 
       <DetailCard icon={ic("M3 8h12a3 3 0 1 0-3-3M3 12h16M3 16h10a3 3 0 1 1-3 3")} label="미세먼지">
