@@ -200,7 +200,10 @@ struct MediumWidgetView: View {
                             Text("\(Int((entry.moonIllum*100).rounded()))%")
                                 .font(.system(size: 18, weight: .regular)).foregroundStyle(.white)
                             Text(entry.moonName)
-                                .font(.system(size: 11)).foregroundStyle(.white.opacity(0.6))
+                                .font(.system(size: 11))
+                                .foregroundStyle(.white.opacity(0.6))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
                         }
                         Spacer(minLength: 0)
                         VStack(alignment: .leading, spacing: 4) {
