@@ -34,7 +34,7 @@ struct ScoreCalculator {
         let p = ((phase.truncatingRemainder(dividingBy: 1)) + 1)
                     .truncatingRemainder(dividingBy: 1)
         switch p {
-        case ..<0.03, 0.97...: return "그믐달"
+        case ..<0.03, 0.97...: return "삭월"
         case ..<0.22:  return "초승달"
         case ..<0.28:  return "상현달"
         case ..<0.47:  return "상현망간의 달"

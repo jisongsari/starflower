@@ -51,7 +51,7 @@ struct DetailGridView: View {
                     Text("\(Int(data.pressure.rounded()))").detailValue()
                     Text("hPa").detailUnit()
                 }
-                Text("지금 · 해면기압").detailSub()
+                Text("지금").detailSub()
             }
             DetailCard(label: "미세먼지", icon: "aqi.medium") {
                 HStack(alignment: .lastTextBaseline, spacing: 2) {

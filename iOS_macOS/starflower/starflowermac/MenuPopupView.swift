@@ -70,7 +70,7 @@ struct HoverIconButtonStyle: ButtonStyle {
             .padding(8)
             .background(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(Color.black.opacity(hovering ? 0.18 : 0))
+                    .fill(Color.black.opacity(hovering ? 0.08 : 0))
             )
             .scaleEffect(configuration.isPressed ? 0.94 : 1)
             .onHover { hovering = $0 }
