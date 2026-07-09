@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      앱은 항상 어두운 밤하늘 배경 위에서 동작하므로 다크 기반 테마로 고정.
+      실제 색은 Compose 쪽에서 그라데이션으로 그리며, 여기서는 스플래시 직전의
+      윈도우 배경과 상태바/내비바 투명 처리만 담당한다.
+    -->
+    <style name="Theme.Starflower" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/window_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+</resources>

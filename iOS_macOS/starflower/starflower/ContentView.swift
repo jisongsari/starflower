@@ -111,6 +111,6 @@ struct ContentView: View {
     private func footer(_ d: StargazingData) -> String {
         var s = d.location.name
         if let a = d.location.admin1 { s += " · \(a)" }
-        return s + " · Open-Meteo · 경기과학고등학교"
+        return s + " · Open-Meteo"
     }
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">별바라기</string>
+    <string name="widget_small_desc">오늘 밤 관측 지수 (2x2)</string>
+    <string name="widget_medium_desc">오늘 밤 관측 지수 (4x2)</string>
+</resources>

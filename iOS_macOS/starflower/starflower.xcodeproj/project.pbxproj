@@ -95,6 +95,13 @@
 			);
 			target = C1922D5C2FE516B900931906 /* starflower */;
 		};
+		C1F1CE362FEBB7E50035C211 /* Exceptions for "starflowermac" folder in "starflowermac" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C19E96752FE96BBF0051CB60 /* starflowermac */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -123,6 +130,9 @@
 		};
 		C19E96772FE96BBF0051CB60 /* starflowermac */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C1F1CE362FEBB7E50035C211 /* Exceptions for "starflowermac" folder in "starflowermac" target */,
+			);
 			path = starflowermac;
 			sourceTree = "<group>";
 		};
@@ -657,7 +667,9 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = starflowermac/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "별바라기";
+				INFOPLIST_KEY_CFBundleName = "별바라기";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -705,7 +717,9 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = starflowermac/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "별바라기";
+				INFOPLIST_KEY_CFBundleName = "별바라기";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (

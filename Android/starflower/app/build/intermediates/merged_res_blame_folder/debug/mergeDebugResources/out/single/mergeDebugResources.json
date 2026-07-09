@@ -1,0 +1,110 @@
+[
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/drawable_ic_w_cloud.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/drawable/ic_w_cloud.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/xml_starflower_widget_info.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/xml/starflower_widget_info.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/drawable_ic_launcher_background.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/font_pretendard_black.ttf.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/font/pretendard_black.ttf"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/font_pretendard_regular.ttf.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/font/pretendard_regular.ttf"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/xml_widget_small_info.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/xml/widget_small_info.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/drawable_widget_preview_bg.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/drawable/widget_preview_bg.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/font_pretendard_semibold.ttf.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/font/pretendard_semibold.ttf"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/font_pretendard_bold.ttf.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/font/pretendard_bold.ttf"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/layout_widget_preview.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/layout/widget_preview.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/drawable_ic_w_snow.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/drawable/ic_w_snow.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/drawable_ic_w_partly.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/drawable/ic_w_partly.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/font_pretendard_extrabold.ttf.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/font/pretendard_extrabold.ttf"
+    },
+    {
+        "merged": "com.songsari.starflower.app-debug-62:/layout_widget_preview_small.xml.flat",
+        "source": "com.songsari.starflower.app-main-64:/layout/widget_preview_small.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/xml_widget_preview_medium.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/xml/widget_preview_medium.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/font_pretendard_medium.ttf.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/font/pretendard_medium.ttf"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/drawable_ic_w_rain.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/drawable/ic_w_rain.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/drawable_ic_w_clear.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/drawable/ic_w_clear.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/xml_widget_preview_small.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/xml/widget_preview_small.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/font_pretendard_extralight.ttf.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/font/pretendard_extralight.ttf"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/font_pretendard_thin.ttf.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/font/pretendard_thin.ttf"
+    },
+    {
+        "merged": "com.songsari.starflower.app-debug-62:/layout_widget_preview_medium.xml.flat",
+        "source": "com.songsari.starflower.app-main-64:/layout/widget_preview_medium.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/xml_widget_medium_info.xml.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/xml/widget_medium_info.xml"
+    },
+    {
+        "merged": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-debug-62:/font_pretendard_light.ttf.flat",
+        "source": "/Users/songsari/.gradle/daemon/8.13/com.songsari.starflower.app-main-64:/font/pretendard_light.ttf"
+    }
+]

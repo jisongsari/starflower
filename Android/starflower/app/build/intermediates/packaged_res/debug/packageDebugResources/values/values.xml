@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="window_bg">#050616</color>
+    <string name="app_name">별바라기</string>
+    <string name="widget_medium_desc">오늘 밤 관측 지수 (4x2)</string>
+    <string name="widget_small_desc">오늘 밤 관측 지수 (2x2)</string>
+    <style name="Theme.Starflower" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/window_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+</resources>

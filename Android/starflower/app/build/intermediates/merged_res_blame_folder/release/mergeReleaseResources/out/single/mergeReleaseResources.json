@@ -1,0 +1,78 @@
+[
+    {
+        "merged": "com.songsari.starflower.app-release-59:/drawable_ic_w_cloud.xml.flat",
+        "source": "com.songsari.starflower.app-main-60:/drawable/ic_w_cloud.xml"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.songsari.starflower.app-main-60:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/xml_starflower_widget_info.xml.flat",
+        "source": "com.songsari.starflower.app-main-60:/xml/starflower_widget_info.xml"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/font_pretendard_bold.ttf.flat",
+        "source": "com.songsari.starflower.app-main-60:/font/pretendard_bold.ttf"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.songsari.starflower.app-main-60:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.songsari.starflower.app-main-60:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/font_pretendard_thin.ttf.flat",
+        "source": "com.songsari.starflower.app-main-60:/font/pretendard_thin.ttf"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/font_pretendard_extrabold.ttf.flat",
+        "source": "com.songsari.starflower.app-main-60:/font/pretendard_extrabold.ttf"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.songsari.starflower.app-main-60:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/font_pretendard_regular.ttf.flat",
+        "source": "com.songsari.starflower.app-main-60:/font/pretendard_regular.ttf"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/font_pretendard_extralight.ttf.flat",
+        "source": "com.songsari.starflower.app-main-60:/font/pretendard_extralight.ttf"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/font_pretendard_semibold.ttf.flat",
+        "source": "com.songsari.starflower.app-main-60:/font/pretendard_semibold.ttf"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/font_pretendard_black.ttf.flat",
+        "source": "com.songsari.starflower.app-main-60:/font/pretendard_black.ttf"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/drawable_ic_w_clear.xml.flat",
+        "source": "com.songsari.starflower.app-main-60:/drawable/ic_w_clear.xml"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/font_pretendard_medium.ttf.flat",
+        "source": "com.songsari.starflower.app-main-60:/font/pretendard_medium.ttf"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/drawable_ic_w_snow.xml.flat",
+        "source": "com.songsari.starflower.app-main-60:/drawable/ic_w_snow.xml"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/drawable_ic_w_partly.xml.flat",
+        "source": "com.songsari.starflower.app-main-60:/drawable/ic_w_partly.xml"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/font_pretendard_light.ttf.flat",
+        "source": "com.songsari.starflower.app-main-60:/font/pretendard_light.ttf"
+    },
+    {
+        "merged": "com.songsari.starflower.app-release-59:/drawable_ic_w_rain.xml.flat",
+        "source": "com.songsari.starflower.app-main-60:/drawable/ic_w_rain.xml"
+    }
+]

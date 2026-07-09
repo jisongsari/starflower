@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 맑은 밤하늘 최상단 색 (#050616) — 앱 로딩 직전 배경 -->
+    <color name="window_bg">#050616</color>
+</resources>
