@@ -87,7 +87,7 @@ fun ScoreHero(score: Int, condition: SkyCondition, temperature: Double, modifier
 
         Text(
             "오늘 밤 19-05시",
-            color = sub.copy(alpha = 0.8f), fontFamily = AppFontFamily,
+            color = sub.copy(alpha = 0.6f), fontFamily = AppFontFamily,
             fontSize = 12.sp, fontWeight = FontWeight.Normal,
             modifier = Modifier.padding(top = 10.dp),
         )

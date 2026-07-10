@@ -75,11 +75,11 @@ object WidgetRender {
         val left = pad
         val contentW = wPx - pad * 2
 
-        val pLoc = tp(context, WidgetFonts.W.SEMIBOLD, 15f, d, w(0.8f))
-        val pScore = tp(context, WidgetFonts.W.THIN, 66f, d, w(1f)).apply { letterSpacing = -0.04f }
+        val pLoc = tp(context, WidgetFonts.W.SEMIBOLD, 18f, d, w(0.8f))
+        val pScore = tp(context, WidgetFonts.W.THIN, 88f, d, w(1f)).apply { letterSpacing = -0.04f }
         val pPct = tp(context, WidgetFonts.W.REGULAR, 26f, d, w(0.85f))
-        val pVerd = tp(context, WidgetFonts.W.MEDIUM, 14f, d, w(0.85f))
-        val pBot = tp(context, WidgetFonts.W.MEDIUM, 12f, d, w(0.55f))
+        val pVerd = tp(context, WidgetFonts.W.MEDIUM, 16f, d, w(0.85f))
+        val pBot = tp(context, WidgetFonts.W.MEDIUM, 13f, d, w(0.55f))
 
         val iconSz = 16 * d
         val verdLeft = left + iconSz + 5 * d
@@ -132,11 +132,11 @@ object WidgetRender {
     }
 
     private fun drawLeft(context: Context, canvas: Canvas, e: WidgetEntry, left: Float, contentW: Float, hPx: Int, d: Float) {
-        val pLoc = tp(context, WidgetFonts.W.SEMIBOLD, 14f, d, w(0.8f))
-        val pScore = tp(context, WidgetFonts.W.THIN, 58f, d, w(1f)).apply { letterSpacing = -0.04f }
-        val pPct = tp(context, WidgetFonts.W.REGULAR, 23f, d, w(0.85f))
-        val pVerd = tp(context, WidgetFonts.W.MEDIUM, 13f, d, w(0.85f))
-        val pBot = tp(context, WidgetFonts.W.MEDIUM, 12f, d, w(0.55f))
+        val pLoc = tp(context, WidgetFonts.W.SEMIBOLD, 18f, d, w(0.8f))
+        val pScore = tp(context, WidgetFonts.W.THIN, 80f, d, w(1f)).apply { letterSpacing = -0.04f }
+        val pPct = tp(context, WidgetFonts.W.REGULAR, 26f, d, w(0.85f))
+        val pVerd = tp(context, WidgetFonts.W.MEDIUM, 15f, d, w(0.85f))
+        val pBot = tp(context, WidgetFonts.W.MEDIUM, 13f, d, w(0.55f))
 
         val iconSz = 14 * d
         val verdLeft = left + iconSz + 5 * d
@@ -164,7 +164,7 @@ object WidgetRender {
     }
 
     private fun drawRight(context: Context, canvas: Canvas, e: WidgetEntry, x: Float, width: Float, hPx: Int, d: Float) {
-        val moonSz = 52 * d
+        val moonSz = 58 * d
         val pMoonPct = tp(context, WidgetFonts.W.REGULAR, 21f, d, w(1f))
         val pMoonName = tp(context, WidgetFonts.W.REGULAR, 12f, d, w(0.62f))
         val pRiseLbl = tp(context, WidgetFonts.W.REGULAR, 11f, d, w(0.55f))
@@ -176,7 +176,7 @@ object WidgetRender {
         val moonRowH = moonSz
         val metLblH = lineH(pMetLbl); val metValH = lineH(pMetVal)
         val gridRowH = metLblH + 3 * d + metValH
-        val gMoon = 12 * d; val gGrid = 11 * d
+        val gMoon = 16 * d; val gGrid = 16 * d
         val total = moonRowH + gMoon + gridRowH + gGrid + gridRowH
         var y = (hPx - total) / 2f
 
@@ -192,13 +192,13 @@ object WidgetRender {
         drawTop(canvas, e.moonName, infoX, iy, pMoonName)
 
         // 월출/월몰: 섹터 전체는 우측 정렬, 내부는 좌측 정렬(라벨 왼쪽 일렬)
-        val rightEdge = x + width - 6 * d       // #4 오른쪽 여백 확보
+        val rightEdge = x + width - 8 * d       // #4 오른쪽 여백 확보
         pRiseLbl.textAlign = Paint.Align.LEFT
         pRiseVal.textAlign = Paint.Align.LEFT
         val lblW = pRiseLbl.measureText("월출 ")
         val valW = max(pRiseVal.measureText(hhmm(e.moonrise)), pRiseVal.measureText(hhmm(e.moonset)))
         val blockLeft = rightEdge - (lblW + valW)
-        val lineGap = 5 * d
+        val lineGap = 6 * d
         val riseH = lineH(pRiseVal)
         val lblDy = (riseH - lineH(pRiseLbl)) / 2f   // 작은 라벨을 값 줄 높이에 맞춰 중앙
         val stackH = riseH * 2 + lineGap

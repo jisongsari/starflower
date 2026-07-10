@@ -69,7 +69,7 @@ class StargazingViewModel(app: Application) : AndroidViewModel(app) {
         _data.value = null   // 이전 데이터 치워 로딩창 표시
         viewModelScope.launch {
             LocationStore.save(getApplication(), loc)
-            WidgetScheduler.updateNow(getApplication())
+            WidgetScheduler.updateWidgetsNow(getApplication())
             loadData()
         }
     }
@@ -86,7 +86,7 @@ class StargazingViewModel(app: Application) : AndroidViewModel(app) {
                 val air = airDeferred.await()
                 _data.value = buildData(loc, wx, air)
                 // 데이터 갱신 후
-                WidgetScheduler.updateNow(getApplication())
+                WidgetScheduler.updateWidgetsNow(getApplication())
             } catch (e: Exception) {
                 _errorMessage.value = "날씨 정보를 불러오지 못했어요."
             } finally {

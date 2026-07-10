@@ -45,6 +45,16 @@ object WidgetScheduler {
         val req = OneTimeWorkRequestBuilder<WidgetUpdateWorker>().build()
         WorkManager.getInstance(context).enqueue(req)
     }
+
+    /**
+     * 위젯을 즉시 직접 갱신(suspend). WorkManager 지연/경쟁 조건이 없어서
+     * 도시 변경처럼 "저장 직후 바로 반영"이 필요할 때 이걸 쓴다.
+     * 반드시 LocationStore.save(...) 가 끝난 뒤 같은 코루틴에서 호출할 것.
+     */
+    suspend fun updateWidgetsNow(context: Context) {
+        SmallGlanceWidget().updateAll(context)
+        MediumGlanceWidget().updateAll(context)
+    }
 }
 
 /** 위젯 데이터 재계산 + 다시 그리기 (두 위젯 모두 갱신) */
