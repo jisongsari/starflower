@@ -69,6 +69,7 @@ class StargazingViewModel(app: Application) : AndroidViewModel(app) {
         _data.value = null   // 이전 데이터 치워 로딩창 표시
         viewModelScope.launch {
             LocationStore.save(getApplication(), loc)
+            WidgetScheduler.updateNow(getApplication())
             loadData()
         }
     }

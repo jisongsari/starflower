@@ -3,6 +3,7 @@ package com.songsari.starflower.widget
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
@@ -21,13 +22,15 @@ import androidx.glance.layout.fillMaxSize
 import com.songsari.starflower.MainActivity
 import kotlin.math.roundToInt
 
+private const val WIDGET_CORNER_DP = 28   // #10 곡률 확대
+
 @Composable
 private fun FullBitmapWidget(bmp: android.graphics.Bitmap) {
     val ctx = LocalContext.current
     Box(
         modifier = GlanceModifier
             .fillMaxSize()
-            .cornerRadius(android.R.dimen.system_app_widget_background_radius)
+            .cornerRadius(WIDGET_CORNER_DP.dp)
             .clickable(
                 actionStartActivity(
                     Intent(ctx, MainActivity::class.java)
@@ -47,6 +50,7 @@ private fun FullBitmapWidget(bmp: android.graphics.Bitmap) {
 /** 2x2 위젯 */
 class SmallGlanceWidget : GlanceAppWidget() {
     override val sizeMode = SizeMode.Exact
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val entry = WidgetRepository.load(context)
         provideContent {
@@ -58,11 +62,13 @@ class SmallGlanceWidget : GlanceAppWidget() {
             FullBitmapWidget(WidgetRender.renderSmall(ctx, entry, wPx, hPx, d))
         }
     }
+
 }
 
 /** 4x2 위젯 */
 class MediumGlanceWidget : GlanceAppWidget() {
     override val sizeMode = SizeMode.Exact
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val entry = WidgetRepository.load(context)
         provideContent {
@@ -74,4 +80,5 @@ class MediumGlanceWidget : GlanceAppWidget() {
             FullBitmapWidget(WidgetRender.renderMedium(ctx, entry, wPx, hPx, d))
         }
     }
+
 }

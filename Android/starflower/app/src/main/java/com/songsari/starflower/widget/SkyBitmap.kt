@@ -1,6 +1,7 @@
 package com.songsari.starflower.widget
 
 import android.graphics.Bitmap
+import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.LinearGradient
@@ -13,9 +14,8 @@ import com.songsari.starflower.model.SkyCondition
 import kotlin.random.Random
 
 /**
- * 위젯 배경 비트맵. iOS WidgetSky 이식.
- * 대각선 그라데이션 + (맑은밤 별 / 맑은낮 해 / 흐림·구름 은은한 구름).
- * Glance 는 그라데이션·드로잉을 직접 못 해서 비트맵으로 만들어 Image 배경으로 깐다.
+ * 위젯 배경 비트맵.
+ * 대각선 그라데이션 + (맑은밤 별 / 맑은낮 해 / 흐림·구름 블러 구름).
  */
 fun renderSkyBitmap(
     condition: SkyCondition,
@@ -40,13 +40,16 @@ fun renderSkyBitmap(
     canvas.drawRect(0f, 0f, w.toFloat(), h.toFloat(), paint)
     paint.shader = null
 
-    // 맑은 밤: 별 40개
+    // 맑은 밤: 작은 별 다수 (자연스러운 밤하늘)
     if (daypart == Daypart.NIGHT && condition == SkyCondition.CLEAR) {
         val rnd = Random(42)
-        for (i in 0 until 40) {
+        val area = w.toDouble() * h.toDouble()
+        val count = (area / 6500.0).toInt().coerceIn(30, 160)
+        val unit = minOf(w, h) / 300f
+        for (i in 0 until count) {
             val x = rnd.nextDouble(0.0, 1.0).toFloat() * w
-            val y = rnd.nextDouble(0.0, 0.85).toFloat() * h
-            val r = (Math.pow(rnd.nextDouble(0.0, 1.0), 2.0) * 1.3 + 0.4).toFloat() * (w / 170f)
+            val y = rnd.nextDouble(0.0, 0.88).toFloat() * h
+            val r = (Math.pow(rnd.nextDouble(0.0, 1.0), 2.3) * 0.9 + 0.45).toFloat() * unit
             val a = rnd.nextDouble(0.4, 0.95).toFloat()
             paint.color = Color.argb((a * 255).toInt(), 255, 255, 255)
             canvas.drawCircle(x, y, r, paint)
@@ -68,15 +71,41 @@ fun renderSkyBitmap(
         paint.shader = null
     }
 
-    // 구름은 위젯 비트맵에서 블러 처리가 불가해 어색하므로 넣지 않는다.
-    // (그라데이션 자체가 흐림/구름 상태를 색으로 표현)
+    // 구름: 소프트웨어 캔버스이므로 BlurMaskFilter 로 자연스러운 블러 가능
+    val cloudAlpha = when (condition) {
+        SkyCondition.CLOUDY, SkyCondition.OVERCAST, SkyCondition.FOG,
+        SkyCondition.RAIN, SkyCondition.SNOW -> 0.20
+        SkyCondition.PARTLY -> 0.13
+        else -> 0.0
+    }
+    if (cloudAlpha > 0.0) {
+        val cloudPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        val blurR = (minOf(w, h) * 0.06f).coerceAtLeast(6f)
+        cloudPaint.maskFilter = BlurMaskFilter(blurR, BlurMaskFilter.Blur.NORMAL)
+        val blobs = listOf(
+            Blob(0.22f, 0.20f, 0.5f, 0.95f),
+            Blob(0.72f, 0.13f, 0.42f, 0.75f),
+            Blob(0.86f, 0.55f, 0.46f, 0.6f),
+            Blob(0.4f, 0.62f, 0.5f, 0.5f),
+        )
+        for (b in blobs) {
+            val bw = w * b.wRatio
+            val bh = bw * 0.5f
+            val cx = w * b.x
+            val cy = h * b.y
+            val a = (cloudAlpha * b.o * 255).toInt().coerceIn(0, 255)
+            cloudPaint.color = Color.argb(a, 255, 255, 255)
+            canvas.drawOval(RectF(cx - bw / 2f, cy - bh / 2f, cx + bw / 2f, cy + bh / 2f), cloudPaint)
+        }
+    }
 
     return bmp
 }
 
+private data class Blob(val x: Float, val y: Float, val wRatio: Float, val o: Float)
+
 private fun c(r: Int, g: Int, b: Int) = Color.rgb(r, g, b)
 
-/** iOS WidgetSky.stops 이식 (location, color) */
 private fun skyStops(condition: SkyCondition, daypart: Daypart): List<Pair<Float, Int>> =
     when (daypart) {
         Daypart.NIGHT -> when (condition) {

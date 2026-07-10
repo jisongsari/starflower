@@ -9,8 +9,8 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
-import androidx.core.content.ContextCompat
 import com.songsari.starflower.R
+import androidx.core.content.ContextCompat
 import com.songsari.starflower.calc.ScoreCalculator
 import com.songsari.starflower.model.SkyCondition
 import java.text.SimpleDateFormat
@@ -76,7 +76,7 @@ object WidgetRender {
         val contentW = wPx - pad * 2
 
         val pLoc = tp(context, WidgetFonts.W.SEMIBOLD, 15f, d, w(0.8f))
-        val pScore = tp(context, WidgetFonts.W.THIN, 66f, d, w(1f))
+        val pScore = tp(context, WidgetFonts.W.THIN, 66f, d, w(1f)).apply { letterSpacing = -0.04f }
         val pPct = tp(context, WidgetFonts.W.REGULAR, 26f, d, w(0.85f))
         val pVerd = tp(context, WidgetFonts.W.MEDIUM, 14f, d, w(0.85f))
         val pBot = tp(context, WidgetFonts.W.MEDIUM, 12f, d, w(0.55f))
@@ -133,7 +133,7 @@ object WidgetRender {
 
     private fun drawLeft(context: Context, canvas: Canvas, e: WidgetEntry, left: Float, contentW: Float, hPx: Int, d: Float) {
         val pLoc = tp(context, WidgetFonts.W.SEMIBOLD, 14f, d, w(0.8f))
-        val pScore = tp(context, WidgetFonts.W.THIN, 58f, d, w(1f))
+        val pScore = tp(context, WidgetFonts.W.THIN, 58f, d, w(1f)).apply { letterSpacing = -0.04f }
         val pPct = tp(context, WidgetFonts.W.REGULAR, 23f, d, w(0.85f))
         val pVerd = tp(context, WidgetFonts.W.MEDIUM, 13f, d, w(0.85f))
         val pBot = tp(context, WidgetFonts.W.MEDIUM, 12f, d, w(0.55f))
@@ -164,7 +164,7 @@ object WidgetRender {
     }
 
     private fun drawRight(context: Context, canvas: Canvas, e: WidgetEntry, x: Float, width: Float, hPx: Int, d: Float) {
-        val moonSz = 46 * d
+        val moonSz = 52 * d
         val pMoonPct = tp(context, WidgetFonts.W.REGULAR, 21f, d, w(1f))
         val pMoonName = tp(context, WidgetFonts.W.REGULAR, 12f, d, w(0.62f))
         val pRiseLbl = tp(context, WidgetFonts.W.REGULAR, 11f, d, w(0.55f))
@@ -184,26 +184,31 @@ object WidgetRender {
         val moonBmp = renderMoonBitmap(e.moonIllum, e.moonPhase < 0.5, moonSz.roundToInt())
         canvas.drawBitmap(moonBmp, x, y + (moonRowH - moonSz) / 2f, null)
         // 달 오른쪽: 조도 % + 위상명
-        val infoX = x + moonSz + 8 * d
+        val infoX = x + moonSz + 4 * d
         val pctH = lineH(pMoonPct); val nameH = lineH(pMoonName)
         val infoStack = pctH + 1 * d + nameH
         var iy = y + (moonRowH - infoStack) / 2f
         drawTop(canvas, "${(e.moonIllum * 100).roundToInt()}%", infoX, iy, pMoonPct); iy += pctH + 1 * d
         drawTop(canvas, e.moonName, infoX, iy, pMoonName)
 
-        // 월출/월몰 (오른쪽 정렬): 값은 오른쪽 끝, 라벨은 값 왼쪽에
-        val rightEdge = x + width
+        // 월출/월몰: 섹터 전체는 우측 정렬, 내부는 좌측 정렬(라벨 왼쪽 일렬)
+        val rightEdge = x + width - 6 * d       // #4 오른쪽 여백 확보
+        pRiseLbl.textAlign = Paint.Align.LEFT
+        pRiseVal.textAlign = Paint.Align.LEFT
+        val lblW = pRiseLbl.measureText("월출 ")
+        val valW = max(pRiseVal.measureText(hhmm(e.moonrise)), pRiseVal.measureText(hhmm(e.moonset)))
+        val blockLeft = rightEdge - (lblW + valW)
         val lineGap = 5 * d
         val riseH = lineH(pRiseVal)
         val lblDy = (riseH - lineH(pRiseLbl)) / 2f   // 작은 라벨을 값 줄 높이에 맞춰 중앙
         val stackH = riseH * 2 + lineGap
         var ry = y + (moonRowH - stackH) / 2f
 
-        drawRightText(canvas, hhmm(e.moonrise), rightEdge, ry, pRiseVal)
-        drawRightText(canvas, "월출 ", rightEdge - pRiseVal.measureText(hhmm(e.moonrise)), ry + lblDy, pRiseLbl)
+        drawTop(canvas, "월출 ", blockLeft, ry + lblDy, pRiseLbl)
+        drawTop(canvas, hhmm(e.moonrise), blockLeft + lblW, ry, pRiseVal)
         ry += riseH + lineGap
-        drawRightText(canvas, hhmm(e.moonset), rightEdge, ry, pRiseVal)
-        drawRightText(canvas, "월몰 ", rightEdge - pRiseVal.measureText(hhmm(e.moonset)), ry + lblDy, pRiseLbl)
+        drawTop(canvas, "월몰 ", blockLeft, ry + lblDy, pRiseLbl)
+        drawTop(canvas, hhmm(e.moonset), blockLeft + lblW, ry, pRiseVal)
 
         y += moonRowH + gMoon
 
@@ -219,14 +224,6 @@ object WidgetRender {
             "미세먼지" to "${e.nightPm25.roundToInt()}㎍",
             "기온" to "${e.temperature.roundToInt()}°",
         ))
-    }
-
-    private fun drawRightText(canvas: Canvas, text: String, rightX: Float, top: Float, p: Paint) {
-        val prev = p.textAlign
-        p.textAlign = Paint.Align.RIGHT
-        val fm = p.fontMetrics
-        canvas.drawText(text, rightX, top - fm.ascent, p)
-        p.textAlign = prev
     }
 
     private fun drawGridRow(

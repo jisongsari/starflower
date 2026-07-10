@@ -56,7 +56,7 @@ fun ForecastView(forecast: List<DayForecast>, modifier: Modifier = Modifier) {
                         day.label,
                         color = text, fontFamily = AppFontFamily,
                         fontSize = 16.sp, fontWeight = FontWeight.Normal,
-                        modifier = Modifier.width(32.dp),
+                        modifier = Modifier.width(37.dp),
                     )
                     WeatherIcon(
                         day.condition, text.copy(alpha = 0.9f), sizeDp = 20.dp,

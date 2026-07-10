@@ -76,17 +76,47 @@ private struct WidgetSky: View {
 }
 
 private struct WidgetStars: View {
-    private let stars: [(x: Double, y: Double, r: Double, a: Double)] = (0..<40).map { _ in
-        (.random(in: 0...1), .random(in: 0...0.85),
-         pow(Double.random(in: 0...1), 2) * 1.3 + 0.4, .random(in: 0.4...0.95))
+    // ▼ 별 밀도: 나누는 수가 작을수록 별이 많아진다 (앱 StarfieldView 와 동일: 1300)
+    private let density: Double = 1000
+
+    private let stars: [(x: Double, y: Double, r: Double, a: Double)] = (0..<900).map { _ in
+        (.random(in: 0...1), .random(in: 0...0.92),
+         pow(Double.random(in: 0...1), 2.3) * 0.7 + 0.2,   // 앱과 동일한 크기 공식
+         .random(in: 0.4...0.95))
     }
+
+    private func sc(_ r: Double, _ g: Double, _ b: Double, _ a: Double) -> Color {
+        Color(.sRGB, red: r/255, green: g/255, blue: b/255, opacity: a)
+    }
+
     var body: some View {
         GeometryReader { geo in
+            let area = Double(geo.size.width) * Double(geo.size.height)
+            let count = min(stars.count, Int(area / density))
             Canvas { ctx, size in
-                for s in stars {
+                for s in stars.prefix(count) {
+                    let a = s.a
                     let x = s.x * size.width, y = s.y * size.height
-                    ctx.fill(Path(ellipseIn: CGRect(x: x-s.r, y: y-s.r, width: s.r*2, height: s.r*2)),
-                             with: .color(.white.opacity(s.a)))
+
+                    // 빛무리 (앱과 동일: r > 0.55, h = r*3.6, 밝기 a*0.55)
+                    if s.r > 0.55 {
+                        let h = s.r * 3.6
+                        ctx.fill(
+                            Path(ellipseIn: CGRect(x: x - h, y: y - h, width: h * 2, height: h * 2)),
+                            with: .radialGradient(
+                                Gradient(colors: [sc(205, 222, 255, a * 0.55), sc(205, 222, 255, 0)]),
+                                center: CGPoint(x: x, y: y),
+                                startRadius: 0,
+                                endRadius: h
+                            )
+                        )
+                    }
+
+                    // 별 본체
+                    ctx.fill(
+                        Path(ellipseIn: CGRect(x: x - s.r, y: y - s.r, width: s.r * 2, height: s.r * 2)),
+                        with: .color(s.r > 1.0 ? sc(220, 230, 255, a) : .white.opacity(a))
+                    )
                 }
             }
         }
