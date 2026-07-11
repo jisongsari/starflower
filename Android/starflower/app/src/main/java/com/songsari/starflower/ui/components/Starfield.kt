@@ -50,7 +50,7 @@ fun Starfield(opacity: Double, modifier: Modifier = Modifier) {
 
     Canvas(modifier = modifier) {
         val area = size.width.toDouble() * size.height.toDouble()
-        val count = min(stars.size, (area / 13000.0 * opacity).toInt())
+        val count = min(stars.size, (area / 6000.0 * opacity).toInt())
         val t = timeSec.toDouble()
         for (i in 0 until count) {
             val s = stars[i]

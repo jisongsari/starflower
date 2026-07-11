@@ -23,6 +23,7 @@ fun renderSkyBitmap(
     daypart: Daypart,
     widthPx: Int,
     heightPx: Int,
+    density: Float,
 ): Bitmap {
     val w = widthPx.coerceAtLeast(1)
     val h = heightPx.coerceAtLeast(1)
@@ -47,13 +48,29 @@ fun renderSkyBitmap(
     if (starOp > 0.02) {
         val rnd = Random(42)
         val area = w.toDouble() * h.toDouble()
-        val count = (area / 6500.0 * starOp).toInt().coerceIn(0, 160)
-        val unit = minOf(w, h) / 300f
+        val count = (area / 6000.0).toInt().coerceIn(0, 600)   // 앱과 동일 밀도
         for (i in 0 until count) {
-            val x = rnd.nextDouble(0.0, 1.0).toFloat() * w
-            val y = rnd.nextDouble(0.0, 0.88).toFloat() * h
-            val r = (Math.pow(rnd.nextDouble(0.0, 1.0), 2.3) * 0.9 + 0.45).toFloat() * unit
-            val a = (rnd.nextDouble(0.4, 0.95) * starOp).toFloat().coerceIn(0f, 1f)
+            val sr = Math.pow(rnd.nextDouble(0.0, 1.0), 2.2) * 0.75 + 0.03  // 앱과 동일 크기식
+            val x = (rnd.nextDouble(0.0, 1.0) * w).toFloat()
+            val y = (rnd.nextDouble(0.0, 0.92) * h).toFloat()
+            val a = rnd.nextDouble(0.35, 0.95).toFloat()
+            val r = (sr * density).toFloat()                    // ★ 앱과 동일: 밀도 곱
+
+            // 빛무리 (앱과 동일: sr > 0.55, 반경 r*3.6, rgba(205,222,255,a*0.55)→투명)
+            if (sr > 0.55) {
+                val hh = r * 3.6f
+                paint.shader = RadialGradient(
+                    x, y, hh,
+                    intArrayOf(
+                        Color.argb((a * 0.55f * 255).toInt(), 205, 222, 255),
+                        Color.argb(0, 205, 222, 255),
+                    ),
+                    floatArrayOf(0f, 1f), Shader.TileMode.CLAMP,
+                )
+                canvas.drawCircle(x, y, hh, paint)
+                paint.shader = null
+            }
+            // 별 본체 (앱과 동일: 흰색)
             paint.color = Color.argb((a * 255).toInt(), 255, 255, 255)
             canvas.drawCircle(x, y, r, paint)
         }

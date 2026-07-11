@@ -69,7 +69,7 @@ object WidgetRender {
     fun renderSmall(context: Context, e: WidgetEntry, wPx: Int, hPx: Int, d: Float): Bitmap {
         val bmp = Bitmap.createBitmap(wPx.coerceAtLeast(1), hPx.coerceAtLeast(1), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
-        canvas.drawBitmap(renderSkyBitmap(e.condition, e.daypart, wPx, hPx), 0f, 0f, null)
+        canvas.drawBitmap(renderSkyBitmap(e.condition, e.daypart, wPx, hPx, d), 0f, 0f, null)
 
         val pad = 16 * d
         val left = pad
@@ -118,7 +118,7 @@ object WidgetRender {
     fun renderMedium(context: Context, e: WidgetEntry, wPx: Int, hPx: Int, d: Float): Bitmap {
         val bmp = Bitmap.createBitmap(wPx.coerceAtLeast(1), hPx.coerceAtLeast(1), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
-        canvas.drawBitmap(renderSkyBitmap(e.condition, e.daypart, wPx, hPx), 0f, 0f, null)
+        canvas.drawBitmap(renderSkyBitmap(e.condition, e.daypart, wPx, hPx, d), 0f, 0f, null)
 
         val pad = 16 * d
         val leftW = wPx * 0.4f

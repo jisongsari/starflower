@@ -61,7 +61,9 @@ struct ContentView: View {
                 .padding(.top, 41)
             }
             .refreshable {
-                await vm.loadData()
+                Task {
+                    await vm.loadData()
+                }
             }
 
             VStack {
