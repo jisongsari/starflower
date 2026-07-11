@@ -76,7 +76,7 @@ object WidgetRender {
         val contentW = wPx - pad * 2
 
         val pLoc = tp(context, WidgetFonts.W.SEMIBOLD, 18f, d, w(0.8f))
-        val pScore = tp(context, WidgetFonts.W.THIN, 88f, d, w(1f)).apply { letterSpacing = -0.04f }
+        val pScore = tp(context, WidgetFonts.W.THIN, 84f, d, w(1f)).apply { letterSpacing = -0.04f }
         val pPct = tp(context, WidgetFonts.W.REGULAR, 26f, d, w(0.85f))
         val pVerd = tp(context, WidgetFonts.W.MEDIUM, 16f, d, w(0.85f))
         val pBot = tp(context, WidgetFonts.W.MEDIUM, 13f, d, w(0.55f))

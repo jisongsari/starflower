@@ -46,12 +46,12 @@ object SkyThemeProvider {
     private fun twilight(c: SkyCondition, dawn: Boolean): SkyTheme {
         val cloudOpacity = when (c) {
             SkyCondition.CLEAR -> 0.0
-            SkyCondition.PARTLY -> 0.4
+            SkyCondition.PARTLY -> 0.55
             else -> 0.7
         }
         val starOpacity = when (c) {
-            SkyCondition.CLEAR -> if (dawn) 0.12 else 0.18
-            SkyCondition.PARTLY -> 0.08
+            SkyCondition.CLEAR -> if (dawn) 0.9 else 1.0
+            SkyCondition.PARTLY -> 0.2
             else -> 0.0
         }
         return SkyTheme(

@@ -56,8 +56,8 @@ struct SkyThemeProvider {
         }
     }
     static func twilight(_ c: SkyCondition, dawn: Bool) -> SkyTheme {
-        let cloudOpacity = c == .clear ? 0.0 : c == .partly ? 0.4 : 0.7
-        let starOpacity  = c == .clear ? (dawn ? 0.12 : 0.18) : c == .partly ? 0.08 : 0.0
+        let cloudOpacity = c == .clear ? 0.0 : c == .partly ? 0.55 : 0.7
+        let starOpacity  = c == .clear ? (dawn ? 0.9 : 1) : c == .partly ? 0.2 : 0.0
         return .init(starOpacity: starOpacity, cloudOpacity: cloudOpacity,
                      cloudTint: dawn ? .rgba(244,180,162,0.58) : .rgba(242,152,142,0.6),
                      showMoon: c == .clear || c == .partly)

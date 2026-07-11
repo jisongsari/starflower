@@ -20,6 +20,7 @@ import androidx.glance.layout.Box
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.fillMaxSize
 import com.songsari.starflower.MainActivity
+import androidx.core.net.toUri
 import kotlin.math.roundToInt
 
 private const val WIDGET_CORNER_DP = 28   // #10 곡률 확대
@@ -33,8 +34,10 @@ private fun FullBitmapWidget(bmp: android.graphics.Bitmap) {
             .cornerRadius(WIDGET_CORNER_DP.dp)
             .clickable(
                 actionStartActivity(
-                    Intent(ctx, MainActivity::class.java)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    Intent(Intent.ACTION_VIEW, "starflower://open".toUri()).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        `package` = ctx.packageName
+                    }
                 )
             )
     ) {
