@@ -4,7 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.Air
 import androidx.compose.material.icons.filled.Bedtime
-import androidx.compose.material.icons.filled.Brightness3
+import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.CloudQueue
@@ -36,7 +36,7 @@ fun DetailGlyph(kind: GlyphKind, color: Color, sizeDp: Dp = 15.dp, modifier: Mod
     val icon: ImageVector = when (kind) {
         GlyphKind.SUNSET -> Icons.Filled.WbTwilight
         GlyphKind.MOON -> Icons.Filled.Bedtime
-        GlyphKind.MOONPHASE -> Icons.Filled.Brightness3
+        GlyphKind.MOONPHASE -> Icons.Filled.Contrast
         GlyphKind.CLOUD -> Icons.Filled.Cloud
         GlyphKind.HUMIDITY -> Icons.Filled.WaterDrop
         GlyphKind.WIND -> Icons.Filled.Air

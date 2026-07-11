@@ -51,9 +51,12 @@ fun DetailGrid(data: StargazingData, modifier: Modifier = Modifier) {
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             DetailCard(GlyphKind.MOONPHASE, "달 위상") {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.Top) {
                     MoonView(data.moonIllum, data.moonPhase < 0.5, sizeDp = 46.dp)
-                    Column(modifier = Modifier.padding(start = 10.dp)) {
+                    Column(
+                        modifier = Modifier.padding(start = 10.dp),
+                        verticalArrangement = Arrangement.spacedBy(2.dp),
+                    ) {
                         ValueText("${(data.moonIllum * 100).roundToInt()}%")
                         SubText(data.moonName)
                     }

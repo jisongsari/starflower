@@ -23,15 +23,19 @@ struct WidgetEntryView: View {
 // ── 위젯 배경: 그라데이션 + 상태별 은은한 효과 ────────────
 private struct WidgetSky: View {
     let entry: StargazingEntry
-
+    
+    private var starOpacity: Double {
+        SkyThemeProvider.theme(entry.condition, entry.daypart).starOpacity
+    }
+    
     var body: some View {
         ZStack {
             LinearGradient(gradient: Gradient(stops: stops),
                            startPoint: .topLeading, endPoint: .bottomTrailing)
 
-            // 맑은 밤: 별
-            if entry.daypart == .night && entry.condition == .clear {
-                WidgetStars()
+            // 별: 앱과 동일하게 starOpacity 로 결정 (밤·일출·일몰 공통)
+            if starOpacity > 0.02 {
+                WidgetStars(opacity: starOpacity)
             }
             // 맑은 낮: 연한 해
             if entry.daypart == .day && entry.condition == .clear {
@@ -76,6 +80,7 @@ private struct WidgetSky: View {
 }
 
 private struct WidgetStars: View {
+    var opacity: Double = 1
     // ▼ 별 밀도: 나누는 수가 작을수록 별이 많아진다 (앱 StarfieldView 와 동일: 1300)
     private let density: Double = 1000
 
@@ -92,10 +97,10 @@ private struct WidgetStars: View {
     var body: some View {
         GeometryReader { geo in
             let area = Double(geo.size.width) * Double(geo.size.height)
-            let count = min(stars.count, Int(area / density))
+            let count = min(stars.count, Int(area / density * opacity))   // * opacity 추가
             Canvas { ctx, size in
                 for s in stars.prefix(count) {
-                    let a = s.a
+                    let a = s.a * opacity     // 기존 let a = s.a 에서 * opacity
                     let x = s.x * size.width, y = s.y * size.height
 
                     // 빛무리 (앱과 동일: r > 0.55, h = r*3.6, 밝기 a*0.55)

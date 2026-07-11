@@ -12,6 +12,7 @@ import android.graphics.Shader
 import com.songsari.starflower.model.Daypart
 import com.songsari.starflower.model.SkyCondition
 import kotlin.random.Random
+import com.songsari.starflower.ui.theme.SkyThemeProvider
 
 /**
  * 위젯 배경 비트맵. iOS WidgetSky 이식.
@@ -41,16 +42,18 @@ fun renderSkyBitmap(
     paint.shader = null
 
     // 맑은 밤: 작은 별 다수 (자연스러운 밤하늘)
-    if (daypart == Daypart.NIGHT && condition == SkyCondition.CLEAR) {
+    // 별: 앱과 동일하게 SkyTheme 의 starOpacity 로 결정 (밤·일출·일몰 공통)
+    val starOp = SkyThemeProvider.theme(condition, daypart).starOpacity
+    if (starOp > 0.02) {
         val rnd = Random(42)
         val area = w.toDouble() * h.toDouble()
-        val count = (area / 6500.0).toInt().coerceIn(30, 160)
-        val unit = minOf(w, h) / 300f          // 폭 큰 4x2 에서도 별이 커지지 않도록 min 기준
+        val count = (area / 6500.0 * starOp).toInt().coerceIn(0, 160)
+        val unit = minOf(w, h) / 300f
         for (i in 0 until count) {
             val x = rnd.nextDouble(0.0, 1.0).toFloat() * w
             val y = rnd.nextDouble(0.0, 0.88).toFloat() * h
             val r = (Math.pow(rnd.nextDouble(0.0, 1.0), 2.3) * 0.9 + 0.45).toFloat() * unit
-            val a = rnd.nextDouble(0.4, 0.95).toFloat()
+            val a = (rnd.nextDouble(0.4, 0.95) * starOp).toFloat().coerceIn(0f, 1f)
             paint.color = Color.argb((a * 255).toInt(), 255, 255, 255)
             canvas.drawCircle(x, y, r, paint)
         }
