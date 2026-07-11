@@ -29,9 +29,6 @@ private fun pretendardFamily(): FontFamily = FontFamily(
         com.songsari.starflower.R.font.pretendard_thin,
         androidx.compose.ui.text.font.FontWeight.Thin),
     androidx.compose.ui.text.font.Font(
-        com.songsari.starflower.R.font.pretendard_extralight,
-        androidx.compose.ui.text.font.FontWeight.ExtraLight),
-    androidx.compose.ui.text.font.Font(
         com.songsari.starflower.R.font.pretendard_light,
         androidx.compose.ui.text.font.FontWeight.Light),
     androidx.compose.ui.text.font.Font(
@@ -43,15 +40,6 @@ private fun pretendardFamily(): FontFamily = FontFamily(
     androidx.compose.ui.text.font.Font(
         com.songsari.starflower.R.font.pretendard_semibold,
         androidx.compose.ui.text.font.FontWeight.SemiBold),
-    androidx.compose.ui.text.font.Font(
-        com.songsari.starflower.R.font.pretendard_bold,
-        androidx.compose.ui.text.font.FontWeight.Bold),
-    androidx.compose.ui.text.font.Font(
-        com.songsari.starflower.R.font.pretendard_black,
-        androidx.compose.ui.text.font.FontWeight.Black),
-    androidx.compose.ui.text.font.Font(
-        com.songsari.starflower.R.font.pretendard_extrabold,
-        androidx.compose.ui.text.font.FontWeight.ExtraBold),
 )
 
 val AppFontFamily: FontFamily =

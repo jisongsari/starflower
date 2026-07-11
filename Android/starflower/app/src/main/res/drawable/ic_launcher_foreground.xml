@@ -1,22 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-
-    <!-- 초승달 (바깥 원에서 안쪽 원을 빼 만든 형태) -->
+    android:viewportWidth="4167"
+    android:viewportHeight="4167">
+  <group android:scaleX="0.9"
+      android:scaleY="0.9"
+      android:translateX="208.35"
+      android:translateY="208.35">
     <path
-        android:fillColor="#FFF1ECD6"
-        android:pathData="M62,34
-            a20,20 0 1 0 0,40
-            a16,16 0 1 1 0,-40 z" />
-
-    <!-- 작은 별들 -->
-    <path android:fillColor="#FFEAF1FB"
-        android:pathData="M44,40 l1.4,3.2 l3.2,1.4 l-3.2,1.4 l-1.4,3.2 l-1.4,-3.2 l-3.2,-1.4 l3.2,-1.4 z" />
-    <path android:fillColor="#FFD7E6FF"
-        android:pathData="M48,62 l1,2.2 l2.2,1 l-2.2,1 l-1,2.2 l-1,-2.2 l-2.2,-1 l2.2,-1 z" />
-    <path android:fillColor="#FFFFFFFF"
-        android:pathData="M70,66 l0.8,1.8 l1.8,0.8 l-1.8,0.8 l-0.8,1.8 l-0.8,-1.8 l-1.8,-0.8 l1.8,-0.8 z" />
+        android:pathData="M2159.3,1860.3l842.3,0l31.8,98.1l-842.3,0z"
+        android:fillColor="#ffffff"/>
+    <path
+        android:pathData="M1825,1958.4l259.8,-801.2l103.1,-0l-259.8,801.2z"
+        android:fillColor="#ffffff"/>
+    <path
+        android:pathData="M1815,2306.6l-681.7,-494.8l31.9,-98.1l681.7,494.8z"
+        android:fillColor="#ffffff"/>
+    <path
+        android:pathData="M2143,2423.7l-681.4,495.1l-83.4,-60.6l681.4,-495.1z"
+        android:fillColor="#ffffff"/>
+    <path
+        android:pathData="M2355.9,2147.9l260.1,801.1l-83.5,60.6l-260.1,-801.1z"
+        android:fillColor="#ffffff"/>
+  </group>
 </vector>

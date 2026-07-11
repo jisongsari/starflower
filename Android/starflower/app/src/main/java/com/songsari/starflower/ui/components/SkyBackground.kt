@@ -1,5 +1,6 @@
 package com.songsari.starflower.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +22,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun SkyBackground(
     condition: SkyCondition,

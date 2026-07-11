@@ -14,6 +14,7 @@ import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.random.Random
+import androidx.compose.ui.graphics.Brush
 
 private data class Star(
     val x: Double, val y: Double, val r: Double,
@@ -33,7 +34,7 @@ fun Starfield(opacity: Double, modifier: Modifier = Modifier) {
             Star(
                 x = Random.nextDouble(0.0, 1.0),
                 y = Random.nextDouble(0.0, 0.92),
-                r = Random.nextDouble(0.0, 1.0).pow(2.2) * 1.5 + 0.3,
+                r = Random.nextDouble(0.0, 1.0).pow(2.2) * 0.75 + 0.03,
                 baseA = Random.nextDouble(0.35, 0.95),
                 speed = Random.nextDouble(0.4, 2.0),
                 phase = Random.nextDouble(0.0, 2 * Math.PI),
@@ -49,7 +50,7 @@ fun Starfield(opacity: Double, modifier: Modifier = Modifier) {
 
     Canvas(modifier = modifier) {
         val area = size.width.toDouble() * size.height.toDouble()
-        val count = min(stars.size, (area / 5200.0 * opacity).toInt())
+        val count = min(stars.size, (area / 13000.0 * opacity).toInt())
         val t = timeSec.toDouble()
         for (i in 0 until count) {
             val s = stars[i]
@@ -57,16 +58,26 @@ fun Starfield(opacity: Double, modifier: Modifier = Modifier) {
             val a = (s.baseA * tw * opacity).toFloat().coerceIn(0f, 1f)
             val x = (s.x * size.width).toFloat()
             val y = (s.y * size.height).toFloat()
-            val r = s.r.toFloat()
-            val color = if (s.r > 1.1) rgba(220, 230, 255) else Color.White
-            drawCircle(color = color.copy(alpha = a), radius = r, center = Offset(x, y))
-            if (s.r > 1.0) {
+            val r = (s.r * density).toFloat()
+
+            // 빛무리(부드러운 radial gradient)를 먼저, 그 위에 별 본체
+            if (s.r > 0.55) {
+                val h = r * 3.6f
                 drawCircle(
-                    color = rgba(220, 230, 255, (a * 0.25).toDouble()),
-                    radius = r * 2.6f,
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            rgba(205, 222, 255, (a * 0.55).toDouble()),
+                            rgba(205, 222, 255, 0.0),
+                        ),
+                        center = Offset(x, y),
+                        radius = h,
+                    ),
+                    radius = h,
                     center = Offset(x, y),
                 )
             }
+            val color = if (s.r > 1.0) rgba(220, 230, 255) else Color.White
+            drawCircle(color = color.copy(alpha = a), radius = r, center = Offset(x, y))
         }
     }
 }
