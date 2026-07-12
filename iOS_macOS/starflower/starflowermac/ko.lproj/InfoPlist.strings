@@ -1,0 +1,9 @@
+//
+//  InfoPlist.strings
+//  starflower
+//
+//  Created by 양지성 on 7/13/26.
+//
+
+CFBundleDisplayName = "별바라기";
+CFBundleName = "별바라기";

@@ -6,12 +6,30 @@
 	<dict>
 		<key>Resources/Assets.car</key>
 		<data>
-		hhxSqEkIvITzVBd/i7lxMS0tYHU=
+		oerlkI+wRhyJlUKbpyuqyBMGiGU=
 		</data>
+		<key>Resources/en.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			bQQ3QgNMUrpwWj5nP8lFI+mtpYE=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
 		<key>Resources/icon_lg.icns</key>
 		<data>
 		avMQzEtmrzBuwDWngU9ba3lP19I=
 		</data>
+		<key>Resources/ko.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			bQQ3QgNMUrpwWj5nP8lFI+mtpYE=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
 	</dict>
 	<key>files2</key>
 	<dict>
@@ -19,8 +37,17 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			fseghCWrgYdNdgXWu0h6q3sn1cPocp4IFdP7VEDxLJ0=
+			Qgh0+5LXJPBYYFOmXgq9yNh0+7xQb7jfSz9Pp4k4H5Q=
 			</data>
+		</dict>
+		<key>Resources/en.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ZI25YRRy6vKxqErt8Kr3KBox6jP6QDSJ1P/mYptMfXI=
+			</data>
+			<key>optional</key>
+			<true/>
 		</dict>
 		<key>Resources/icon_lg.icns</key>
 		<dict>
@@ -28,6 +55,15 @@
 			<data>
 			HbkvOK1H89AYFVPCWoU0Ro0fuIBa2DchMNH4Ijs4FYk=
 			</data>
+		</dict>
+		<key>Resources/ko.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ZI25YRRy6vKxqErt8Kr3KBox6jP6QDSJ1P/mYptMfXI=
+			</data>
+			<key>optional</key>
+			<true/>
 		</dict>
 	</dict>
 	<key>rules</key>
