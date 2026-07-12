@@ -162,10 +162,7 @@ fun SearchScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable {
-                                    onSelect(r)
-                                    scope.launch { RecentSearchStore.add(context, r) }
-                                }
+                                .clickable { onSelect(r) }
                                 .padding(vertical = 13.dp, horizontal = 8.dp),
                             verticalArrangement = Arrangement.spacedBy(2.dp),
                         ) {
@@ -212,10 +209,7 @@ private fun RecentList(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable {
-                        onSelect(r)
-                        scope.launch { RecentSearchStore.add(context, r) }
-                    }
+                    .clickable { onSelect(r) }
                     .padding(vertical = 11.dp, horizontal = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {

@@ -17,6 +17,7 @@ import com.songsari.starflower.model.SavedLocation
 import com.songsari.starflower.model.SkyCondition
 import com.songsari.starflower.model.StargazingData
 import com.songsari.starflower.widget.WidgetScheduler
+import com.songsari.starflower.data.RecentSearchStore
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -69,6 +70,7 @@ class StargazingViewModel(app: Application) : AndroidViewModel(app) {
         _data.value = null   // 이전 데이터 치워 로딩창 표시
         viewModelScope.launch {
             LocationStore.save(getApplication(), loc)
+            RecentSearchStore.add(getApplication(), r)
             WidgetScheduler.updateWidgetsNow(getApplication())
             loadData()
         }

@@ -116,17 +116,17 @@ struct SearchView: View {
                             Image(systemName: "clock").font(.system(size: 13))
                                 .foregroundStyle(.white.opacity(0.4))
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(r.name).font(.system(size: 16, weight: .medium))
+                                Text(r.name).font(.system(size: 17, weight: .semibold))
                                     .foregroundStyle(.white)
                                 if !r.displayName.isEmpty {
-                                    Text(r.displayName).font(.system(size: 12))
-                                        .foregroundStyle(.white.opacity(0.5))
+                                    Text(r.displayName).font(.system(size: 13))
+                                        .foregroundStyle(.white.opacity(0.55))
                                 }
                             }
                             Spacer()
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, 11).padding(.horizontal, 8)
+                        .padding(.vertical, 13).padding(.horizontal, 8)
                     }
                     Rectangle().fill(.white.opacity(0.08)).frame(height: 1)
                 }
