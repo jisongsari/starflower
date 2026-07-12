@@ -36,6 +36,10 @@ struct MacSearchView: View {
                         Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
                     }.buttonStyle(.plain)
                 }
+                Button("취소") { onCancel() }
+                    .buttonStyle(.plain)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Color.rgba(142,162,255,1))
             }
             .padding(12)
             .background(Color.primary.opacity(0.06))

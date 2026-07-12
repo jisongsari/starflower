@@ -46,6 +46,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C120300D3003E44A00C1407F /* Exceptions for "starflower" folder in "starflower" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"/Localized: InfoPlist.strings",
+			);
+			target = C1922D5C2FE516B900931906 /* starflower */;
+		};
 		C1922D842FE523D500931906 /* Exceptions for "StarflowerWidget" folder in "StarflowerWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -106,9 +113,23 @@
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		C120300E3003E44A00C1407F /* Exceptions for "starflower" folder in "Compile Sources" phase from "starflower" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = C1922D592FE516B900931906 /* Sources */;
+			membershipExceptions = (
+				"/Localized: InfoPlist.strings",
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C1922D5F2FE516B900931906 /* starflower */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C120300D3003E44A00C1407F /* Exceptions for "starflower" folder in "starflower" target */,
+				C120300E3003E44A00C1407F /* Exceptions for "starflower" folder in "Compile Sources" phase from "starflower" target */,
+			);
 			path = starflower;
 			sourceTree = "<group>";
 		};
@@ -299,6 +320,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = C1922D542FE516B900931906;
 			minimizedProjectReferenceProxies = 1;
@@ -668,10 +690,9 @@
 				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = starflowermac/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Starflower;
-				INFOPLIST_KEY_CFBundleName = Starflower;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -718,10 +739,9 @@
 				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = starflowermac/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Starflower;
-				INFOPLIST_KEY_CFBundleName = Starflower;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
