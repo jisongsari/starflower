@@ -103,42 +103,61 @@ struct MacSearchView: View {
     }
 
     private var recentListView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
                 Text("최근 검색")
                     .font(.caption).fontWeight(.semibold)
                     .foregroundStyle(.secondary)
-                    .padding(.horizontal, 12).padding(.top, 6).padding(.bottom, 4)
-                ForEach(recents) { r in
-                    Button {
-                        onSelect(r)
-                        RecentSearchStore.add(r, key: recentsKey)
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: "clock").font(.system(size: 12))
-                                .foregroundStyle(.secondary)
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(r.name).font(.system(size: 15, weight: .semibold))
-                                    .foregroundStyle(.primary)
-                                let meta = [r.admin1, r.country].compactMap { $0 }.joined(separator: ", ")
-                                if !meta.isEmpty {
-                                    Text(meta).font(.system(size: 12)).foregroundStyle(.secondary)
-                                }
-                            }
-                            Spacer()
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, 9).padding(.horizontal, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .fill(Color.primary.opacity(hoverID == r.id ? 0.08 : 0))
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .onHover { hoverID = $0 ? r.id : nil }
+                Spacer()
+                Button("전체 삭제") {
+                    RecentSearchStore.clear(key: recentsKey)
+                    recents = []
                 }
+                .buttonStyle(.plain)
+                .font(.caption)
+                .foregroundStyle(.blue)
             }
-            .padding(.horizontal, 10).padding(.vertical, 8)
+            .padding(.horizontal, 12).padding(.top, 6).padding(.bottom, 4)
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 2) {
+                    ForEach(recents) { r in
+                        Button {
+                            onSelect(r)
+                            RecentSearchStore.add(r, key: recentsKey)
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "clock").font(.system(size: 12))
+                                    .foregroundStyle(.secondary)
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(r.name).font(.system(size: 15, weight: .semibold))
+                                        .foregroundStyle(.primary)
+                                    let meta = [r.admin1, r.country].compactMap { $0 }.joined(separator: ", ")
+                                    if !meta.isEmpty {
+                                        Text(meta).font(.system(size: 12)).foregroundStyle(.secondary)
+                                    }
+                                }
+                                Spacer()
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.vertical, 9).padding(.horizontal, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .fill(Color.primary.opacity(hoverID == r.id ? 0.08 : 0))
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .onHover { hoverID = $0 ? r.id : nil }
+                        .contextMenu {
+                            Button("삭제") {
+                                RecentSearchStore.remove(r, key: recentsKey)
+                                recents.removeAll { $0.id == r.id }
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 10).padding(.vertical, 8)
+            }
         }
     }
     

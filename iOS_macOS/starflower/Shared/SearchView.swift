@@ -100,12 +100,22 @@ struct SearchView: View {
     }
     
     private var recentListView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
                 Text("최근 검색")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.white.opacity(0.5))
-                    .padding(.horizontal, 8).padding(.top, 4).padding(.bottom, 6)
+                Spacer()
+                Button("전체 삭제") {
+                    RecentSearchStore.clear(key: recentsKey)
+                    recents = []
+                }
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(Color.rgba(142,162,255,1))
+            }
+            .padding(.horizontal, 16).padding(.top, 8).padding(.bottom, 2)
+
+            List {
                 ForEach(recents) { r in
                     Button {
                         onSelect(r)
@@ -125,13 +135,23 @@ struct SearchView: View {
                             }
                             Spacer()
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, 13).padding(.horizontal, 8)
                     }
-                    Rectangle().fill(.white.opacity(0.08)).frame(height: 1)
+                    .buttonStyle(.plain)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparatorTint(.white.opacity(0.08))
+                    .listRowInsets(EdgeInsets(top: 13, leading: 24, bottom: 13, trailing: 16))
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            RecentSearchStore.remove(r, key: recentsKey)
+                            recents.removeAll { $0.id == r.id }
+                        } label: {
+                            Label("삭제", systemImage: "trash")
+                        }
+                    }
                 }
             }
-            .padding(.horizontal, 16).padding(.top, 8)
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
         }
     }
 

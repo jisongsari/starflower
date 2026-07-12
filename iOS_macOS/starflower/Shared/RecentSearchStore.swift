@@ -22,4 +22,15 @@ enum RecentSearchStore {
         guard let data = try? JSONEncoder().encode(list) else { return }
         UserDefaults.standard.set(data, forKey: key)
     }
+
+    static func remove(_ result: GeoResult, key: String) {
+        var list = load(key: key)
+        list.removeAll { $0.name == result.name && $0.admin1 == result.admin1 && $0.country == result.country }
+        guard let data = try? JSONEncoder().encode(list) else { return }
+        UserDefaults.standard.set(data, forKey: key)
+    }
+
+    static func clear(key: String) {
+        UserDefaults.standard.removeObject(forKey: key)
+    }
 }

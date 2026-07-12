@@ -37,4 +37,14 @@ object RecentSearchStore {
         val trimmed = current.take(MAX)
         context.recentSearchDataStore.edit { p -> p[KEY] = adapter.toJson(trimmed) }
     }
+
+    suspend fun remove(context: Context, result: GeoResult) {
+        val current = load(context).toMutableList()
+        current.removeAll { it.name == result.name && it.admin1 == result.admin1 && it.country == result.country }
+        context.recentSearchDataStore.edit { p -> p[KEY] = adapter.toJson(current) }
+    }
+
+    suspend fun clear(context: Context) {
+        context.recentSearchDataStore.edit { p -> p.remove(KEY) }
+    }
 }

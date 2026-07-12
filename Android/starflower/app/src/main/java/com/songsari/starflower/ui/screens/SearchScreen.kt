@@ -15,7 +15,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +47,6 @@ import com.songsari.starflower.ui.components.UiGlyph
 import com.songsari.starflower.ui.components.UiIcon
 import com.songsari.starflower.ui.theme.AppFontFamily
 import com.songsari.starflower.ui.theme.rgba
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -154,7 +157,20 @@ fun SearchScreen(
                             "관측할 지역을 검색해 보세요.\n정확한 결과를 위해 수원시, 제주시처럼 '시·군·구'까지 입력해 주세요."
                         )
                     } else {
-                        RecentList(recents, onSelect, context, scope)
+                        RecentList(
+                            recents = recents,
+                            onSelect = onSelect,
+                            onDeleteOne = { r ->
+                                recents = recents.filterNot {
+                                    it.name == r.name && it.admin1 == r.admin1 && it.country == r.country
+                                }
+                                scope.launch { RecentSearchStore.remove(context, r) }
+                            },
+                            onClearAll = {
+                                recents = emptyList()
+                                scope.launch { RecentSearchStore.clear(context) }
+                            },
+                        )
                     }
                 }
                 else -> LazyColumn(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
@@ -193,50 +209,99 @@ fun SearchScreen(
 private fun RecentList(
     recents: List<GeoResult>,
     onSelect: (GeoResult) -> Unit,
-    context: android.content.Context,
-    scope: CoroutineScope,
+    onDeleteOne: (GeoResult) -> Unit,
+    onClearAll: () -> Unit,
 ) {
     LazyColumn(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
         item {
-            Text(
-                "최근 검색",
-                color = rgba(255, 255, 255, 0.5), fontFamily = AppFontFamily,
-                fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-            )
-        }
-        items(recents) { r ->
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onSelect(r) }
-                    .padding(vertical = 11.dp, horizontal = 8.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                UiIcon(UiGlyph.HISTORY, rgba(255, 255, 255, 0.4), 15.dp)
-                Column(
-                    modifier = Modifier.padding(start = 10.dp),
-                    verticalArrangement = Arrangement.spacedBy(2.dp),
-                ) {
-                    Text(
-                        r.name, color = rgba(255, 255, 255),
-                        fontFamily = AppFontFamily, fontSize = 16.sp, fontWeight = FontWeight.Medium,
-                    )
-                    if (r.displayName.isNotEmpty()) {
-                        Text(
-                            r.displayName, color = rgba(255, 255, 255, 0.5),
-                            fontFamily = AppFontFamily, fontSize = 12.sp,
-                        )
-                    }
-                }
+                Text(
+                    "최근 검색",
+                    color = rgba(255, 255, 255, 0.5), fontFamily = AppFontFamily,
+                    fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
+                )
+                Text(
+                    "전체 삭제",
+                    color = rgba(142, 162, 255), fontFamily = AppFontFamily,
+                    fontSize = 12.sp, fontWeight = FontWeight.Medium,
+                    modifier = Modifier.clickable { onClearAll() },
+                )
             }
-            Box(
-                Modifier.fillMaxWidth().padding(horizontal = 8.dp)
-                    .background(rgba(255, 255, 255, 0.08))
-                    .height(1.dp)
-            )
+        }
+        items(recents, key = { "${it.name}_${it.admin1}_${it.country}" }) { r ->
+            RecentRow(r = r, onSelect = onSelect, onDelete = { onDeleteOne(r) })
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RecentRow(
+    r: GeoResult,
+    onSelect: (GeoResult) -> Unit,
+    onDelete: () -> Unit,
+) {
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+            if (value == SwipeToDismissBoxValue.EndToStart) {
+                onDelete()
+                true
+            } else {
+                false
+            }
+        },
+    )
+    SwipeToDismissBox(
+        state = dismissState,
+        enableDismissFromStartToEnd = false,
+        enableDismissFromEndToStart = true,
+        backgroundContent = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(rgba(220, 70, 70, 0.9))
+                    .padding(horizontal = 20.dp),
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                UiIcon(UiGlyph.CLOSE, rgba(255, 255, 255), 18.dp)
+            }
+        },
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(rgba(8, 10, 22, 0.96))
+                .clickable { onSelect(r) }
+                .padding(vertical = 11.dp, horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            UiIcon(UiGlyph.HISTORY, rgba(255, 255, 255, 0.4), 15.dp)
+            Column(
+                modifier = Modifier.padding(start = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                Text(
+                    r.name, color = rgba(255, 255, 255),
+                    fontFamily = AppFontFamily, fontSize = 16.sp, fontWeight = FontWeight.Medium,
+                )
+                if (r.displayName.isNotEmpty()) {
+                    Text(
+                        r.displayName, color = rgba(255, 255, 255, 0.5),
+                        fontFamily = AppFontFamily, fontSize = 12.sp,
+                    )
+                }
+            }
+        }
+    }
+    Box(
+        Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+            .background(rgba(255, 255, 255, 0.08))
+            .height(1.dp)
+    )
 }
 
 @Composable
