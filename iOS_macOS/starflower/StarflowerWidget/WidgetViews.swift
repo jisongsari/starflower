@@ -60,21 +60,45 @@ private struct WidgetSky: View {
     }
     private var stops: [Gradient.Stop] {
         func s(_ c: Color, _ l: Double) -> Gradient.Stop { .init(color: c, location: l) }
+        let c = entry.condition
+        let twilightEligible = (c == .clear || c == .partly || c == .cloudy)
         switch entry.daypart {
         case .night:
-            switch entry.condition {
+            switch c {
             case .clear:  return [s(col(8,10,34),0), s(col(20,27,77),0.6), s(col(33,42,110),1)]
             case .partly: return [s(col(12,18,44),0), s(col(28,38,78),1)]
             default:      return [s(col(26,32,48),0), s(col(48,56,74),1)]
             }
         case .day:
-            switch entry.condition {
+            switch c {
             case .clear:  return [s(col(64,128,200),0), s(col(140,185,228),1)]
             case .partly: return [s(col(96,134,184),0), s(col(168,193,220),1)]
             default:      return [s(col(120,132,150),0), s(col(168,177,189),1)]
             }
-        case .dawn: return [s(col(38,52,98),0), s(col(120,96,140),0.55), s(col(224,176,140),1)]
-        case .dusk: return [s(col(34,44,92),0), s(col(128,82,128),0.55), s(col(228,160,116),1)]
+        case .dawn:
+            if twilightEligible {
+                return [s(col(38,52,98),0), s(col(120,96,140),0.55), s(col(224,176,140),1)]
+            }
+            // 비·눈·안개·온흐림은 노을 대신 낮 테마 색으로 (앱 SkyGradientLayer.twilightBG 와 동일 규칙)
+            switch c {
+            case .overcast: return [s(col(116,128,145),0), s(col(139,149,163),0.5), s(col(163,171,182),1)]
+            case .fog:      return [s(col(154,154,166),0), s(col(174,174,184),0.5), s(col(194,194,202),1)]
+            case .snow:     return [s(col(138,155,184),0), s(col(174,188,207),0.5), s(col(211,221,233),1)]
+            case .rain:     return [s(col(95,111,126),0), s(col(118,133,143),0.5), s(col(144,156,165),1)]
+            default:        return [s(col(120,132,150),0), s(col(168,177,189),1)]
+            }
+        case .dusk:
+            if twilightEligible {
+                return [s(col(34,44,92),0), s(col(128,82,128),0.55), s(col(228,160,116),1)]
+            }
+            // 비·눈·안개·온흐림은 노을 대신 밤 테마 색으로
+            switch c {
+            case .overcast: return [s(col(35,39,47),0), s(col(47,52,61),0.5), s(col(59,65,75),1)]
+            case .fog:      return [s(col(42,44,56),0), s(col(58,58,72),0.55), s(col(70,68,79),1)]
+            case .snow:     return [s(col(31,39,56),0), s(col(49,60,82),0.55), s(col(74,90,118),1)]
+            case .rain:     return [s(col(22,29,40),0), s(col(32,48,58),0.55), s(col(43,65,74),1)]
+            default:        return [s(col(26,32,48),0), s(col(48,56,74),1)]
+            }
         }
     }
 }
