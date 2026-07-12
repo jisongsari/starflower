@@ -260,21 +260,28 @@ private fun RecentRow(
         enableDismissFromStartToEnd = false,
         enableDismissFromEndToStart = true,
         backgroundContent = {
+            val progress = if (dismissState.targetValue == SwipeToDismissBoxValue.Settled) {
+                0f
+            } else {
+                dismissState.progress
+            }
+            val active = dismissState.targetValue == SwipeToDismissBoxValue.EndToStart
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(rgba(220, 70, 70, 0.9))
+                    .background(rgba(220, 70, 70, (progress * 3f).coerceIn(0f, 1f).toDouble()))
                     .padding(horizontal = 20.dp),
                 contentAlignment = Alignment.CenterEnd,
             ) {
-                UiIcon(UiGlyph.CLOSE, rgba(255, 255, 255), 18.dp)
+                if (active) {
+                    UiIcon(UiGlyph.CLOSE, rgba(255, 255, 255), 18.dp)
+                }
             }
         },
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(rgba(8, 10, 22, 0.96))
                 .clickable { onSelect(r) }
                 .padding(vertical = 11.dp, horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
