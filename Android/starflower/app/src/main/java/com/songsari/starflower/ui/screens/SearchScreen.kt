@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -29,20 +30,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.songsari.starflower.data.GeoService
+import com.songsari.starflower.data.RecentSearchStore
 import com.songsari.starflower.model.GeoResult
 import com.songsari.starflower.ui.components.UiGlyph
 import com.songsari.starflower.ui.components.UiIcon
 import com.songsari.starflower.ui.theme.AppFontFamily
 import com.songsari.starflower.ui.theme.rgba
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(
@@ -54,11 +59,20 @@ fun SearchScreen(
     var results by remember { mutableStateOf<List<GeoResult>>(emptyList()) }
     var loading by remember { mutableStateOf(false) }
     var hint by remember { mutableStateOf<String?>(null) }
+    var recents by remember { mutableStateOf<List<GeoResult>>(emptyList()) }
+
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     val focus = remember { FocusRequester() }
     LaunchedEffect(Unit) {
         delay(120)
         runCatching { focus.requestFocus() }
+    }
+
+    // 최근 검색 기록 로드
+    LaunchedEffect(Unit) {
+        recents = RecentSearchStore.load(context)
     }
 
     // 디바운스 검색
@@ -130,19 +144,28 @@ fun SearchScreen(
                 }
             }
 
-            // 결과 / 힌트
+            // 결과 / 최근검색 / 힌트
             when {
                 loading -> HintText("검색 중…")
                 hint != null -> HintText(hint!!)
-                query.trim().length < 2 -> HintText(
-                    "관측할 지역을 검색해 보세요.\n정확한 결과를 위해 수원시, 제주시처럼 '시·군·구'까지 입력해 주세요."
-                )
+                query.trim().length < 2 -> {
+                    if (recents.isEmpty()) {
+                        HintText(
+                            "관측할 지역을 검색해 보세요.\n정확한 결과를 위해 수원시, 제주시처럼 '시·군·구'까지 입력해 주세요."
+                        )
+                    } else {
+                        RecentList(recents, onSelect, context, scope)
+                    }
+                }
                 else -> LazyColumn(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
                     items(results) { r ->
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { onSelect(r) }
+                                .clickable {
+                                    onSelect(r)
+                                    scope.launch { RecentSearchStore.add(context, r) }
+                                }
                                 .padding(vertical = 13.dp, horizontal = 8.dp),
                             verticalArrangement = Arrangement.spacedBy(2.dp),
                         ) {
@@ -165,6 +188,59 @@ fun SearchScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun RecentList(
+    recents: List<GeoResult>,
+    onSelect: (GeoResult) -> Unit,
+    context: android.content.Context,
+    scope: CoroutineScope,
+) {
+    LazyColumn(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+        item {
+            Text(
+                "최근 검색",
+                color = rgba(255, 255, 255, 0.5), fontFamily = AppFontFamily,
+                fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+            )
+        }
+        items(recents) { r ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onSelect(r)
+                        scope.launch { RecentSearchStore.add(context, r) }
+                    }
+                    .padding(vertical = 11.dp, horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                UiIcon(UiGlyph.HISTORY, rgba(255, 255, 255, 0.4), 15.dp)
+                Column(
+                    modifier = Modifier.padding(start = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    Text(
+                        r.name, color = rgba(255, 255, 255),
+                        fontFamily = AppFontFamily, fontSize = 16.sp, fontWeight = FontWeight.Medium,
+                    )
+                    if (r.displayName.isNotEmpty()) {
+                        Text(
+                            r.displayName, color = rgba(255, 255, 255, 0.5),
+                            fontFamily = AppFontFamily, fontSize = 12.sp,
+                        )
+                    }
+                }
+            }
+            Box(
+                Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+                    .background(rgba(255, 255, 255, 0.08))
+                    .height(1.dp)
+            )
         }
     }
 }

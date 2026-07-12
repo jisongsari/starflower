@@ -16,6 +16,8 @@ struct SearchView: View {
     @State private var loading = false
     @State private var hint: String?
     @Environment(\.dismiss) private var dismiss
+    @State private var recents: [GeoResult] = []
+    private let recentsKey = "starflower.recentSearches.v1"
 
     var body: some View {
         ZStack {
@@ -52,14 +54,20 @@ struct SearchView: View {
                 } else if let h = hint {
                     hintView(h); Spacer()
                 } else if query.trimmingCharacters(in: .whitespaces).count < 2 {
-                    hintView("관측할 지역을 검색해 보세요.\n정확한 결과를 위해 수원시, 제주시처럼 '시·군·구'까지 입력해 주세요.")
-                    Spacer()
+                    if recents.isEmpty {
+                        hintView("관측할 지역을 검색해 보세요.\n정확한 결과를 위해 수원시, 제주시처럼 '시·군·구'까지 입력해 주세요.")
+                        Spacer()
+                    } else {
+                        recentListView
+                    }
                 } else {
                     ScrollView {
                         VStack(spacing: 0) {
                             ForEach(results) { r in
                                 Button {
-                                    onSelect(r); dismiss()
+                                    onSelect(r)
+                                    RecentSearchStore.add(r, key: recentsKey)
+                                    dismiss()
                                 } label: {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(r.name).font(.system(size: 17, weight: .semibold))
@@ -81,12 +89,50 @@ struct SearchView: View {
             }
         }
         .preferredColorScheme(.dark)
+        .preferredColorScheme(.dark)
+        .onAppear { recents = RecentSearchStore.load(key: recentsKey) }
     }
 
     private func hintView(_ s: String) -> some View {
         Text(s).font(.system(size: 14)).foregroundStyle(.white.opacity(0.6))
             .multilineTextAlignment(.center).lineSpacing(3)
             .frame(maxWidth: .infinity).padding(.horizontal, 24).padding(.top, 40)
+    }
+    
+    private var recentListView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("최근 검색")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.5))
+                    .padding(.horizontal, 8).padding(.top, 4).padding(.bottom, 6)
+                ForEach(recents) { r in
+                    Button {
+                        onSelect(r)
+                        RecentSearchStore.add(r, key: recentsKey)
+                        dismiss()
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: "clock").font(.system(size: 13))
+                                .foregroundStyle(.white.opacity(0.4))
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(r.name).font(.system(size: 16, weight: .medium))
+                                    .foregroundStyle(.white)
+                                if !r.displayName.isEmpty {
+                                    Text(r.displayName).font(.system(size: 12))
+                                        .foregroundStyle(.white.opacity(0.5))
+                                }
+                            }
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 11).padding(.horizontal, 8)
+                    }
+                    Rectangle().fill(.white.opacity(0.08)).frame(height: 1)
+                }
+            }
+            .padding(.horizontal, 16).padding(.top, 8)
+        }
     }
 
     private func runSearch(_ q: String) async {

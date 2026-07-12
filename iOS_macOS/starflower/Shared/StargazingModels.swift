@@ -15,7 +15,7 @@ struct SavedLocation: Codable, Equatable {
     var longitude: Double
 }
 
-struct GeoResult: Identifiable {
+struct GeoResult: Identifiable, Codable, Equatable {
     let id: Int
     let name: String
     let admin1: String?

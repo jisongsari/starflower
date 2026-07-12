@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.filled.WbTwilight
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -26,9 +27,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.songsari.starflower.model.SkyCondition
 
+
 // 기존 호출부 호환을 위해 enum 은 그대로 유지한다.
 enum class GlyphKind { SUNSET, MOON, MOONPHASE, CLOUD, HUMIDITY, WIND, GAUGE, AQI }
-enum class UiGlyph { SEARCH, CLOSE, LOCATION, CHEVRON_DOWN, REFRESH }
+enum class UiGlyph { SEARCH, CLOSE, LOCATION, CHEVRON_DOWN, REFRESH, HISTORY }
 
 /** 디테일 카드 라벨 아이콘 (Material Icons) */
 @Composable
@@ -68,6 +70,7 @@ fun UiIcon(kind: UiGlyph, color: Color, sizeDp: Dp, modifier: Modifier = Modifie
         UiGlyph.LOCATION -> Icons.Filled.LocationOn
         UiGlyph.CHEVRON_DOWN -> Icons.Filled.KeyboardArrowDown
         UiGlyph.REFRESH -> Icons.Filled.Refresh
+        UiGlyph.HISTORY -> Icons.Filled.History
     }
     Icon(icon, contentDescription = null, tint = color, modifier = modifier.size(sizeDp))
 }
