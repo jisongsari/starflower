@@ -113,7 +113,7 @@ struct SearchView: View {
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(Color.rgba(142,162,255,1))
             }
-            .padding(.horizontal, 16).padding(.top, 8).padding(.bottom, 2)
+            .padding(.horizontal, 16).padding(.top, 12).padding(.bottom, 2)
 
             List {
                 ForEach(recents) { r in

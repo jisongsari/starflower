@@ -52,6 +52,7 @@ struct ContentView: View {
                             .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous)
                                 .stroke(.white.opacity(0.08), lineWidth: 1))
                         DetailGridView(data: d)
+                            .padding(.top, -3)
                         Text(footer(d)).font(.system(size: 12))
                             .foregroundStyle(.white.opacity(0.45))
                             .padding(.top, 6).padding(.bottom, 25)

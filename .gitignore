@@ -17,6 +17,7 @@ captures/
 
 # Build artifacts
 **/build/
+**/release/
 
 # Log files
 *.log

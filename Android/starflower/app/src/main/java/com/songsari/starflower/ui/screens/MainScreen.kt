@@ -95,10 +95,13 @@ fun MainScreen(vm: StargazingViewModel = viewModel()) {
                     data == null && error != null -> ErrorBlock(error!!) { vm.loadData() }
                     d != null -> {
                         ScoreHero(d.score, d.condition, d.temperature)
-                        Box(
-                            modifier = Modifier.softLightSurface(RoundedCornerShape(24.dp)),
-                        ) { ForecastView(d.forecast) }
-                        DetailGrid(d)
+                        Column(verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier.softLightSurface(RoundedCornerShape(24.dp)),
+                            ) { ForecastView(d.forecast) }
+                            DetailGrid(d)
+                        }
                         Text(
                             footer(d),
                             color = rgba(255, 255, 255, 0.45),

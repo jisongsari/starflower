@@ -119,9 +119,9 @@ struct MacSearchView: View {
                 }
                 .buttonStyle(.plain)
                 .font(.caption)
-                .foregroundStyle(.blue)
+                .foregroundStyle(Color.rgba(142,162,255,1))
             }
-            .padding(.horizontal, 12).padding(.top, 6).padding(.bottom, 4)
+            .padding(.horizontal, 12).padding(.top, 10).padding(.bottom, 4)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 2) {
