@@ -72,7 +72,7 @@ struct Provider: TimelineProvider {
 
     // ── 데이터 fetch + 계산 ───────────────────────────────
     private func fetchEntry() async -> StargazingEntry {
-        let defaults = UserDefaults(suiteName: "group.com.songsari.starflower")
+        let defaults = UserDefaults(suiteName: "group.com.songsari.star")
         let lat = defaults?.double(forKey: "latitude")  ?? 37.5665
         let lng = defaults?.double(forKey: "longitude") ?? 126.9780
         let name = defaults?.string(forKey: "locationName") ?? "위치 없음"

@@ -19,7 +19,7 @@ final class StargazingViewModel: ObservableObject {
     @Published var savedLocation: SavedLocation? { didSet { persist() } }
 
     private let weather = WeatherService.shared
-    private let appGroup = UserDefaults(suiteName: "group.com.songsari.starflower")
+    private let appGroup = UserDefaults(suiteName: "group.com.songsari.star")
     private let key = "starflower.location.v1"
 
     private let weekdays = ["일","월","화","수","목","금","토"]
