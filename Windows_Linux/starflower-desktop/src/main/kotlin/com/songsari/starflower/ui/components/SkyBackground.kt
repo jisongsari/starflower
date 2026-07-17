@@ -1,6 +1,5 @@
 package com.songsari.starflower.ui.components
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +21,6 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun SkyBackground(
     condition: SkyCondition,
@@ -38,7 +36,6 @@ fun SkyBackground(
     val moonTop = 0.22 - min(1.0, max(0.0, sin(moonAltitude))) * 0.06
     val moonSize = 104.0 + moonIllum * 34.0
 
-    // 운량 0~1, 10% 이하는 0 (완전 맑음), 10~100%를 0~1로 재매핑
     val coverage = run {
         val c = cloudCover / 100.0
         if (c <= 0.10) 0.0 else ((c - 0.10) / 0.90).coerceIn(0.0, 1.0)
@@ -55,10 +52,8 @@ fun SkyBackground(
         val w = maxWidth
         val h = maxHeight
 
-        // 배경 그라데이션
         Canvas(Modifier.fillMaxSize()) { drawSky(condition, daypart) }
 
-        // 해 (맑은 낮) — 그라데이션과 분리해 자체 블러
         if (daypart == Daypart.DAY && condition == SkyCondition.CLEAR) {
             Canvas(Modifier.fillMaxSize().blur(40.dp, BlurredEdgeTreatment.Unbounded)) {
                 val c = Offset(size.width * 0.8f, size.height * 0.12f)
@@ -73,12 +68,9 @@ fun SkyBackground(
             }
         }
 
-        // 별
         Starfield(theme.starOpacity, Modifier.fillMaxSize())
 
-        // 달
         if (moonVisible) {
-            // MoonView 발자국이 sizeDp 이므로 그 절반으로 중심 정렬 (달무리는 밖으로 흘러 안 잘림)
             val offX = w * 0.18f - (moonSize / 2).dp
             val offY = h * moonTop.toFloat() - (moonSize / 2).dp
             MoonView(
@@ -89,10 +81,8 @@ fun SkyBackground(
             )
         }
 
-        // 구름
         CloudView(cloudOpacity, theme.cloudTint, coverage, Modifier.fillMaxSize())
 
-        // 하단 비네트
         Canvas(Modifier.fillMaxSize()) {
             drawRect(
                 brush = Brush.verticalGradient(
@@ -105,7 +95,6 @@ fun SkyBackground(
     }
 }
 
-// ── 배경 그라데이션 그리기 ────────────────────────────────
 private fun DrawScope.drawSky(c: SkyCondition, dp: Daypart) {
     when (dp) {
         Daypart.NIGHT -> nightSky(c)
@@ -178,7 +167,7 @@ private fun DrawScope.daySky(c: SkyCondition) {
     when (c) {
         SkyCondition.CLEAR -> linearV(
             0f to rgba(47, 116, 192), 0.45f to rgba(79, 147, 212), 1f to rgba(143, 192, 232),
-        )   // 해는 별도 블러 레이어에서 그린다 (SkyBackground 본문)
+        )
         SkyCondition.PARTLY -> linearV(
             0f to rgba(90, 130, 180), 0.5f to rgba(125, 159, 198), 1f to rgba(170, 195, 222),
         )

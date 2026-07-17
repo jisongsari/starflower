@@ -208,58 +208,58 @@ private fun RecentList(
     onDeleteOne: (GeoResult) -> Unit,
     onClearAll: () -> Unit,
 ) {
-    LazyColumn(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    "최근 검색",
-                    color = rgba(255, 255, 255, 0.5), fontFamily = AppFontFamily,
-                    fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
-                )
-                Text(
-                    "전체 삭제",
-                    color = rgba(142, 162, 255), fontFamily = AppFontFamily,
-                    fontSize = 12.sp, fontWeight = FontWeight.Medium,
-                    modifier = Modifier.clickable { onClearAll() },
-                )
-            }
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                "최근 검색",
+                color = rgba(255, 255, 255, 0.5), fontFamily = AppFontFamily,
+                fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
+            )
+            Text(
+                "전체 삭제",
+                color = rgba(142, 162, 255), fontFamily = AppFontFamily,
+                fontSize = 12.sp, fontWeight = FontWeight.Medium,
+                modifier = Modifier.clickable { onClearAll() },
+            )
         }
-        items(recents, key = { "${it.name}_${it.admin1}_${it.country}" }) { r ->
-            ContextMenuArea(items = { listOf(ContextMenuItem("삭제") { onDeleteOne(r) }) }) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onSelect(r) }
-                        .padding(vertical = 11.dp, horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        Icons.Filled.History, contentDescription = null,
-                        tint = rgba(255, 255, 255, 0.4), modifier = Modifier.padding(end = 10.dp),
-                    )
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text(
-                            r.name, color = rgba(255, 255, 255),
-                            fontFamily = AppFontFamily, fontSize = 16.sp, fontWeight = FontWeight.Medium,
+        LazyColumn {
+            items(recents, key = { "${it.name}_${it.admin1}_${it.country}" }) { r ->
+                ContextMenuArea(items = { listOf(ContextMenuItem("삭제") { onDeleteOne(r) }) }) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onSelect(r) }
+                            .padding(vertical = 11.dp, horizontal = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            Icons.Filled.History, contentDescription = null,
+                            tint = rgba(255, 255, 255, 0.4), modifier = Modifier.padding(end = 10.dp),
                         )
-                        if (r.displayName.isNotEmpty()) {
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             Text(
-                                r.displayName, color = rgba(255, 255, 255, 0.5),
-                                fontFamily = AppFontFamily, fontSize = 12.sp,
+                                r.name, color = rgba(255, 255, 255),
+                                fontFamily = AppFontFamily, fontSize = 16.sp, fontWeight = FontWeight.Medium,
                             )
+                            if (r.displayName.isNotEmpty()) {
+                                Text(
+                                    r.displayName, color = rgba(255, 255, 255, 0.5),
+                                    fontFamily = AppFontFamily, fontSize = 12.sp,
+                                )
+                            }
                         }
                     }
                 }
+                Box(
+                    Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+                        .background(rgba(255, 255, 255, 0.08))
+                        .height(1.dp)
+                )
             }
-            Box(
-                Modifier.fillMaxWidth().padding(horizontal = 8.dp)
-                    .background(rgba(255, 255, 255, 0.08))
-                    .height(1.dp)
-            )
         }
     }
 }
