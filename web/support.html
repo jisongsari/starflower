@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>고객지원 — 별바라기</title>
+<link rel="icon" type="image/png" href="/favicon2.png" />
+<link rel="apple-touch-icon" href="/favicon2.png" />
+<meta property="og:title" content="고객지원 - 별바라기" />
+<meta name="description" content="오늘 밤의 별 관측 조건을 0-100%로 수치화" />
+<meta property="og:description" content="오늘 밤의 별 관측 조건을 0-100%로 수치화" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+<style>
+  :root {
+    --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+      "Apple SD Gothic Neo", system-ui, sans-serif;
+    --text: #f5f7ff;
+    --sub-text: rgba(255,255,255,0.64);
+    --card-bg: rgba(0,0,0,0.25);
+    --card-border: rgba(255,255,255,0.08);
+    --accent: var(--text);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+
+  body {
+    font-family: var(--font);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(120% 70% at 50% 100%, rgba(255,170,120,0.35) 0%, rgba(255,150,140,0.15) 40%, rgba(255,150,140,0) 100%),
+      linear-gradient(180deg, #14224e 0%, #3a3168 26%, #7a4f7e 48%, #c2727f 70%, #e7a576 100%) fixed;
+  }
+
+  canvas#sky { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .sky-vignette {
+    position: fixed; inset: 0; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(8,10,22,0.2) 0%, transparent 22%, rgba(0,0,0,0.32) 100%);
+  }
+
+  .page { position: relative; z-index: 2; max-width: 640px; margin: 0 auto; padding: 60px 20px 90px; }
+
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600;
+    color: var(--sub-text);
+    text-decoration: none;
+    margin-bottom: 34px;
+  }
+  .back:hover { color: var(--text); }
+  .back:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  .back svg { width: 13px; height: 13px; }
+
+  h1 { font-size: clamp(24px, 5vw, 30px); font-weight: 200; letter-spacing: -0.03em; margin-bottom: 36px; }
+  .updated { font-size: 13px; font-weight: 600; color: var(--sub-text); margin-bottom: 36px; }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    backdrop-filter: blur(22px) saturate(135%);
+    -webkit-backdrop-filter: blur(22px) saturate(135%);
+    box-shadow: 0 6px 22px rgba(0,0,0,0.14);
+    padding: clamp(24px, 5vw, 38px);
+  }
+
+  .intro { font-size: 14px; line-height: 1.7; color: var(--sub-text); padding-bottom: 24px; }
+
+  section { padding-top: 24px; }
+  section:first-of-type { padding-top: 0; }
+
+  h2 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--sub-text);
+    margin-bottom: 8px;
+  }
+
+  p, li {
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--text);
+    font-weight: 400;
+  }
+  p + p { margin-top: 8px; }
+
+  ul { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+
+  .fact {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .fact a { color: inherit; text-decoration: none; }
+  .fact a:hover { opacity: 0.85; }
+
+  footer {
+    position: relative; z-index: 2;
+    text-align: center;
+    font-size: 12px;
+    color: var(--sub-text);
+    opacity: 0.8;
+    padding: 0 20px 40px;
+  }
+  footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  footer a:hover { opacity: 0.85; }
+
+  @media (prefers-reduced-motion: reduce) {
+    canvas#sky { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="sky"></canvas>
+<div class="sky-vignette"></div>
+
+<div class="page">
+  <a class="back" href="/">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    별바라기로 돌아가기
+  </a>
+
+  <h1>고객지원</h1>
+
+  <div class="card">
+    <p class="intro">
+      별바라기를 이용하시다 궁금한 점이나 불편한 점이 있으면 언제든지 아래 이메일로
+      문의해 주세요. 확인하는 대로 답변드리겠습니다.
+    </p>
+    <span class="fact"><a href="mailto:support@wolilab.com">support@wolilab.com</a></span>
+  </div>
+</div>
+
+<footer>© 2026 Songsari · <a href="/">별바라기로 돌아가기</a> · <a href="/privacy-policy">개인정보처리방침</a></footer>
+
+<script>
+(function () {
+  var canvas = document.getElementById('sky');
+  var ctx = canvas.getContext('2d');
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var W, H;
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  var stars = [];
+  for (var i = 0; i < 260; i++) {
+    stars.push({
+      x: Math.random(), y: Math.random() * 0.55,
+      r: Math.pow(Math.random(), 2.4) * 0.55 + 0.15,
+      baseA: 0.25 + Math.random() * 0.45,
+      speed: 0.4 + Math.random() * 1.6,
+      phase: Math.random() * Math.PI * 2,
+    });
+  }
+
+  function frame(now) {
+    var t = now / 1000;
+    ctx.clearRect(0, 0, W, H);
+    var fadeStart = H * 0.42;
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      var tw = reduceMotion ? 0.8 : 0.55 + 0.45 * Math.sin(t * s.speed + s.phase);
+      var a = Math.max(0, Math.min(1, s.baseA * tw));
+      var x = s.x * W, y = s.y * H;
+      if (y > fadeStart) a *= Math.max(0, 1 - (y - fadeStart) / (H * 0.55 - fadeStart));
+      if (a <= 0.01) continue;
+      var r = s.r * dpr;
+      ctx.fillStyle = s.r > 0.9 ? 'rgba(220,230,255,' + a.toFixed(3) + ')' : 'rgba(255,255,255,' + a.toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+    if (!reduceMotion) requestAnimationFrame(frame);
+  }
+  if (reduceMotion) { frame(0); } else { requestAnimationFrame(frame); }
+})();
+</script>
+</body>
+</html>

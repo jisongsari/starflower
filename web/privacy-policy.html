@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>개인정보처리방침 — 별바라기</title>
+<link rel="icon" type="image/png" href="/favicon2.png" />
+<link rel="apple-touch-icon" href="/favicon2.png" />
+<meta property="og:title" content="개인정보처리방침 - 별바라기" />
+<meta name="description" content="오늘 밤의 별 관측 조건을 0-100%로 수치화" />
+<meta property="og:description" content="오늘 밤의 별 관측 조건을 0-100%로 수치화" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+<style>
+  :root {
+    --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+      "Apple SD Gothic Neo", system-ui, sans-serif;
+    --text: #f5f7ff;
+    --sub-text: rgba(255,255,255,0.64);
+    --card-bg: rgba(0,0,0,0.25);
+    --card-border: rgba(255,255,255,0.08);
+    --accent: var(--text);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+
+  body {
+    font-family: var(--font);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(120% 70% at 50% 100%, rgba(255,170,120,0.35) 0%, rgba(255,150,140,0.15) 40%, rgba(255,150,140,0) 100%),
+      linear-gradient(180deg, #14224e 0%, #3a3168 26%, #7a4f7e 48%, #c2727f 70%, #e7a576 100%) fixed;
+  }
+
+  canvas#sky { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .sky-vignette {
+    position: fixed; inset: 0; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(8,10,22,0.2) 0%, transparent 22%, rgba(0,0,0,0.32) 100%);
+  }
+
+  .page { position: relative; z-index: 2; max-width: 640px; margin: 0 auto; padding: 60px 20px 90px; }
+
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600;
+    color: var(--sub-text);
+    text-decoration: none;
+    margin-bottom: 34px;
+  }
+  .back:hover { color: var(--text); }
+  .back:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  .back svg { width: 13px; height: 13px; }
+
+  h1 { font-size: clamp(24px, 5vw, 30px); font-weight: 200; letter-spacing: -0.03em; margin-bottom: 6px; }
+  .updated { font-size: 13px; font-weight: 600; color: var(--sub-text); margin-bottom: 36px; }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    backdrop-filter: blur(22px) saturate(135%);
+    -webkit-backdrop-filter: blur(22px) saturate(135%);
+    box-shadow: 0 6px 22px rgba(0,0,0,0.14);
+    padding: clamp(24px, 5vw, 38px);
+  }
+
+  .intro { font-size: 14px; line-height: 1.7; color: var(--sub-text); padding-bottom: 24px; }
+
+  section { padding-top: 24px; }
+  section:first-of-type { padding-top: 0; }
+
+  h2 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--sub-text);
+    margin-bottom: 8px;
+  }
+
+  p, li {
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--text);
+    font-weight: 400;
+  }
+  p + p { margin-top: 8px; }
+
+  ul { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+
+  .fact {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  footer {
+    position: relative; z-index: 2;
+    text-align: center;
+    font-size: 12px;
+    color: var(--sub-text);
+    opacity: 0.8;
+    padding: 0 20px 40px;
+  }
+  footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  footer a:hover { opacity: 0.85; }
+
+  @media (prefers-reduced-motion: reduce) {
+    canvas#sky { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="sky"></canvas>
+<div class="sky-vignette"></div>
+
+<div class="page">
+  <a class="back" href="/">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    별바라기로 돌아가기
+  </a>
+
+  <h1>개인정보처리방침</h1>
+  <p class="updated">2026년 07월 17일부터 적용</p>
+
+  <div class="card">
+    <p class="intro">
+      송사리소프트는 「개인정보 보호법」 제30조에 따라 정보주체의 개인정보를 보호하고
+      이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 다음과 같이
+      개인정보 처리방침을 수립·공개합니다.
+    </p>
+
+    <section>
+      <h2>제1조 · 개인정보의 처리 목적</h2>
+      <p>
+        송사리소프트는 다음의 목적을 위하여 개인정보를 처리합니다. 처리하고 있는 개인정보는
+        다음의 목적 이외의 용도로는 이용되지 않으며, 이용 목적이 변경되는 경우에는
+        「개인정보 보호법」 제18조에 따라 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.
+      </p>
+      <span class="fact">별바라기 — 개인정보를 수집하지 않음</span>
+    </section>
+
+    <section>
+      <h2>제2조 · 개인정보의 처리 및 보유 기간</h2>
+      <p>
+        송사리소프트는 법령에 따른 개인정보 보유·이용기간 또는 정보주체로부터 개인정보를
+        수집 시에 동의받은 개인정보 보유·이용기간 내에서 개인정보를 처리·보유합니다.
+      </p>
+      <span class="fact">별바라기 — 개인정보를 수집하지 않음</span>
+    </section>
+
+    <section>
+      <h2>제3조 · 정보주체와 법정대리인의 권리·의무 및 그 행사방법</h2>
+      <ul>
+        <li>정보주체는 송사리소프트에 대해 언제든지 개인정보 열람·정정·삭제·처리정지 요구 등의 권리를 행사할 수 있습니다.</li>
+        <li>제1항에 따른 권리 행사는 송사리소프트에 대해 「개인정보 보호법」 시행령 제41조제1항에 따라 서면, 전자우편, 모사전송(FAX) 등을 통하여 하실 수 있으며, 송사리소프트는 이에 대해 지체 없이 조치하겠습니다.</li>
+        <li>제1항에 따른 권리 행사는 정보주체의 법정대리인이나 위임을 받은 자 등 대리인을 통하여 하실 수 있습니다. 이 경우 "개인정보 처리 방법에 관한 고시(제2020-7호)" 별지 제11호 서식에 따른 위임장을 제출하셔야 합니다.</li>
+        <li>개인정보 열람 및 처리정지 요구는 「개인정보 보호법」 제35조 제4항, 제37조 제2항에 의하여 정보주체의 권리가 제한될 수 있습니다.</li>
+        <li>개인정보의 정정 및 삭제 요구는 다른 법령에서 그 개인정보가 수집 대상으로 명시되어 있는 경우에는 그 삭제를 요구할 수 없습니다.</li>
+        <li>송사리소프트는 정보주체 권리에 따른 열람·정정·삭제·처리정지 요구 시, 요구를 한 자가 본인이거나 정당한 대리인인지를 확인합니다.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>제4조 · 처리하는 개인정보의 항목</h2>
+      <p>송사리소프트는 별바라기에서 다음의 개인정보 항목을 처리하고 있습니다.</p>
+      <span class="fact">필수항목 없음 · 선택항목 없음</span>
+    </section>
+
+    <section>
+      <h2>제5조 · 개인정보의 파기</h2>
+      <p>
+        송사리소프트는 개인정보 보유기간의 경과, 처리목적 달성 등 개인정보가 불필요하게
+        되었을 때에는 지체없이 해당 개인정보를 파기합니다.
+      </p>
+      <p>
+        파기절차 — 파기 사유가 발생한 개인정보를 선정하고, 개인정보 보호책임자의 승인을 받아
+        파기합니다. 파기방법 — 전자적 파일 형태의 정보는 기록을 재생할 수 없는 기술적 방법을
+        사용합니다.
+      </p>
+    </section>
+
+    <section>
+      <h2>제6조 · 개인정보의 안전성 확보 조치</h2>
+      <p>송사리소프트는 개인정보의 안전성 확보를 위해 다음과 같은 조치를 취하고 있습니다.</p>
+      <ul>
+        <li>내부관리계획의 수립 및 시행 — 개인정보의 안전한 처리를 위하여 내부관리계획을 수립하고 시행하고 있습니다.</li>
+        <li>개인정보에 대한 접근 제한 — 데이터베이스시스템에 대한 접근권한의 부여·변경·말소를 통하여 접근통제를 위한 조치를 하고 있으며, 침입차단시스템을 이용하여 외부로부터의 무단 접근을 통제하고 있습니다.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>제7조 · 개인정보 자동 수집 장치의 설치·운영 및 거부에 관한 사항</h2>
+      <p>
+        송사리소프트는 정보주체의 이용정보를 저장하고 수시로 불러오는 '쿠키(cookie)'를
+        사용하지 않습니다. 다만 웹 버전(star.wolilab.com/web) 이용 시, 마지막으로 선택한
+        관측 위치를 다음 방문에도 그대로 불러오기 위해 브라우저의 로컬 스토리지(Local Storage)에
+        위치 정보를 저장합니다. 이 정보는 이용자의 브라우저에만 저장되며 송사리소프트의
+        서버로 전송되지 않고, 브라우저 설정에서 언제든지 직접 삭제할 수 있습니다.
+      </p>
+    </section>
+
+    <section>
+      <h2>제8조 · 권익침해 구제방법</h2>
+      <p>
+        정보주체는 개인정보침해로 인한 구제를 받기 위하여 개인정보분쟁조정위원회,
+        한국인터넷진흥원 개인정보침해신고센터 등에 분쟁해결이나 상담 등을 신청할 수 있습니다.
+        이 밖에 기타 개인정보침해의 신고, 상담에 대하여는 아래의 기관에 문의하시기 바랍니다.
+      </p>
+      <ul>
+        <li>개인정보분쟁조정위원회 — (국번없이) 1833-6972</li>
+        <li>개인정보침해신고센터 — (국번없이) 118</li>
+        <li>대검찰청 — (국번없이) 1301</li>
+        <li>경찰청 — (국번없이) 182</li>
+      </ul>
+      <p>
+        「개인정보보호법」 제35조(개인정보의 열람), 제36조(개인정보의 정정·삭제), 제37조(개인정보의
+        처리정지 등)의 규정에 의한 요구에 대하여 공공기관의 장이 행한 처분 또는 부작위로 인하여
+        권리 또는 이익의 침해를 받은 자는 행정심판법이 정하는 바에 따라 행정심판을 청구할 수 있습니다.
+        자세한 사항은 중앙행정심판위원회 홈페이지를 참고하시기 바랍니다.
+      </p>
+    </section>
+  </div>
+</div>
+
+<footer>© 2026 Songsari · <a href="/">별바라기로 돌아가기</a> · <a href="/support">고객지원</a></footer>
+
+<script>
+(function () {
+  var canvas = document.getElementById('sky');
+  var ctx = canvas.getContext('2d');
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var W, H;
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  var stars = [];
+  for (var i = 0; i < 260; i++) {
+    stars.push({
+      x: Math.random(), y: Math.random() * 0.55,
+      r: Math.pow(Math.random(), 2.4) * 0.55 + 0.15,
+      baseA: 0.25 + Math.random() * 0.45,
+      speed: 0.4 + Math.random() * 1.6,
+      phase: Math.random() * Math.PI * 2,
+    });
+  }
+
+  function frame(now) {
+    var t = now / 1000;
+    ctx.clearRect(0, 0, W, H);
+    var fadeStart = H * 0.42;
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      var tw = reduceMotion ? 0.8 : 0.55 + 0.45 * Math.sin(t * s.speed + s.phase);
+      var a = Math.max(0, Math.min(1, s.baseA * tw));
+      var x = s.x * W, y = s.y * H;
+      if (y > fadeStart) a *= Math.max(0, 1 - (y - fadeStart) / (H * 0.55 - fadeStart));
+      if (a <= 0.01) continue;
+      var r = s.r * dpr;
+      ctx.fillStyle = s.r > 0.9 ? 'rgba(220,230,255,' + a.toFixed(3) + ')' : 'rgba(255,255,255,' + a.toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+    if (!reduceMotion) requestAnimationFrame(frame);
+  }
+  if (reduceMotion) { frame(0); } else { requestAnimationFrame(frame); }
+})();
+</script>
+</body>
+</html>
