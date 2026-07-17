@@ -98,8 +98,11 @@ export default function App() {
             <ForecastCard forecast={data.forecast} />
             <DetailGrid data={data} />
             <footer className="updated">
-              {data.location.name}
-              {data.location.admin1 ? ` · ${data.location.admin1}` : ""} · Open-Meteo · 경기과학고등학교
+              <p>
+                {data.location.name}
+                {data.location.admin1 ? ` · ${data.location.admin1}` : ""} · Open-Meteo · 
+              </p>
+              <a className="home-link" href="/">메인으로 돌아가기</a>
             </footer>
           </main>
         )}

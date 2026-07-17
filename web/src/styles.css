@@ -365,12 +365,21 @@ body {
 }
 
 .updated {
-  text-align: center;
-  font-size: 12px;
-  color: var(--sub-text);
-  margin-top: 22px;
-  opacity: 0.8;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
+.updated p { margin: 0; }
+.home-link {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  opacity: 0.85;
+}
+.home-link:hover { opacity: 1; }
 
 /* ── 상태 메시지 ────────────────────────────────────────── */
 .state-msg {

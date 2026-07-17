@@ -27,11 +27,17 @@
     font-family: var(--font);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
-    background:
-      radial-gradient(120% 70% at 50% 100%, rgba(255,170,120,0.35) 0%, rgba(255,150,140,0.15) 40%, rgba(255,150,140,0) 100%),
-      linear-gradient(180deg, #14224e 0%, #3a3168 26%, #7a4f7e 48%, #c2727f 70%, #e7a576 100%) fixed;
+    background: #14224e;   /* 사파리 상단바 색 샘플링용 단색 폴백 */
   }
 
+  /* index.html 과 동일 기법: fixed + inset:0 은 스크롤 여부와 무관하게
+     안전영역(노치·하단바)까지 항상 확실하게 덮인다. */
+  .bg-fixed {
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(120% 70% at 50% 100%, rgba(255,170,120,0.35) 0%, rgba(255,150,140,0.15) 40%, rgba(255,150,140,0) 100%),
+      linear-gradient(180deg, #14224e 0%, #3a3168 26%, #7a4f7e 48%, #c2727f 70%, #e7a576 100%);
+  }
   canvas#sky { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
   .sky-vignette {
     position: fixed; inset: 0; pointer-events: none;
@@ -115,6 +121,7 @@
 </head>
 <body>
 
+<div class="bg-fixed"></div>
 <canvas id="sky"></canvas>
 <div class="sky-vignette"></div>
 
