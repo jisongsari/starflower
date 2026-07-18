@@ -58,6 +58,8 @@ struct ContentView: View {
                             .padding(.top, 6).padding(.bottom, 25)
                     }
                 }
+                .frame(maxWidth: 600)          // 600 이상 안 늘어남 (macOS와 동일)
+                .frame(maxWidth: .infinity)    // 남는 공간에서 가운데 정렬
                 .padding(.horizontal, 18)
                 .padding(.top, 41)
             }

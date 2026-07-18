@@ -145,7 +145,7 @@ struct SearchView: View {
                             RecentSearchStore.remove(r, key: recentsKey)
                             recents.removeAll { $0.id == r.id }
                         } label: {
-                            Label("삭제", systemImage: "trash")
+                            Label("", systemImage: "trash")
                         }
                     }
                 }
