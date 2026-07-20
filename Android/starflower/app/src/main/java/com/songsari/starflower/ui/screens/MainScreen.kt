@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -85,30 +86,39 @@ fun MainScreen(vm: StargazingViewModel = viewModel()) {
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .statusBarsPadding()
-                    .padding(horizontal = 18.dp)
                     .padding(top = 56.dp, bottom = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                when {
-                    data == null && isLoading -> LoadingBlock()
-                    data == null && error != null -> ErrorBlock(error!!) { vm.loadData() }
-                    d != null -> {
-                        ScoreHero(d.score, d.condition, d.temperature)
-                        Column(verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier.softLightSurface(RoundedCornerShape(24.dp)),
-                            ) { ForecastView(d.forecast) }
-                            DetailGrid(d)
+                Column(
+                    modifier = Modifier
+                        .widthIn(max = 600.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 18.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    when {
+                        data == null && isLoading -> LoadingBlock()
+                        data == null && error != null -> ErrorBlock(error!!) { vm.loadData() }
+                        d != null -> {
+                            ScoreHero(d.score, d.condition, d.temperature)
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier.softLightSurface(RoundedCornerShape(24.dp)),
+                                ) { ForecastView(d.forecast) }
+                                DetailGrid(d)
+                            }
+                            Text(
+                                footer(d),
+                                color = rgba(255, 255, 255, 0.45),
+                                fontFamily = AppFontFamily, fontSize = 12.sp,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(top = 6.dp),
+                            )
                         }
-                        Text(
-                            footer(d),
-                            color = rgba(255, 255, 255, 0.45),
-                            fontFamily = AppFontFamily, fontSize = 12.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 6.dp),
-                        )
                     }
                 }
             }

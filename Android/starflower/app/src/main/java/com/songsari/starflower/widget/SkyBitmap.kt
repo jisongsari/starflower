@@ -142,12 +142,19 @@ private fun skyStops(condition: SkyCondition, daypart: Daypart): List<Pair<Float
         Daypart.NIGHT -> when (condition) {
             SkyCondition.CLEAR -> listOf(0f to c(8, 10, 34), 0.6f to c(20, 27, 77), 1f to c(33, 42, 110))
             SkyCondition.PARTLY -> listOf(0f to c(12, 18, 44), 1f to c(28, 38, 78))
-            else -> listOf(0f to c(26, 32, 48), 1f to c(48, 56, 74))
+            SkyCondition.CLOUDY -> listOf(0f to c(26, 32, 48), 0.5f to c(38, 46, 63), 1f to c(53, 62, 80))
+            SkyCondition.OVERCAST -> listOf(0f to c(35, 39, 47), 0.5f to c(47, 52, 61), 1f to c(59, 65, 75))
+            SkyCondition.FOG -> listOf(0f to c(42, 44, 56), 0.55f to c(58, 58, 72), 1f to c(70, 68, 79))
+            SkyCondition.SNOW -> listOf(0f to c(31, 39, 56), 0.55f to c(49, 60, 82), 1f to c(74, 90, 118))
+            SkyCondition.RAIN -> listOf(0f to c(22, 29, 40), 0.55f to c(32, 48, 58), 1f to c(43, 65, 74))
         }
         Daypart.DAY -> when (condition) {
             SkyCondition.CLEAR -> listOf(0f to c(64, 128, 200), 1f to c(140, 185, 228))
             SkyCondition.PARTLY -> listOf(0f to c(96, 134, 184), 1f to c(168, 193, 220))
-            else -> listOf(0f to c(120, 132, 150), 1f to c(168, 177, 189))
+            SkyCondition.CLOUDY, SkyCondition.OVERCAST -> listOf(0f to c(116, 128, 145), 0.5f to c(139, 149, 163), 1f to c(163, 171, 182))
+            SkyCondition.FOG -> listOf(0f to c(154, 154, 166), 0.5f to c(174, 174, 184), 1f to c(194, 194, 202))
+            SkyCondition.SNOW -> listOf(0f to c(138, 155, 184), 0.5f to c(174, 188, 207), 1f to c(211, 221, 233))
+            SkyCondition.RAIN -> listOf(0f to c(95, 111, 126), 0.5f to c(118, 133, 143), 1f to c(144, 156, 165))
         }
         Daypart.DAWN -> if (twilightEligible) {
             listOf(0f to c(38, 52, 98), 0.55f to c(120, 96, 140), 1f to c(224, 176, 140))
