@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.songsari.starflower"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.songsari.starflower"
         minSdk = 31
-        targetSdk = 35
+        targetSdk = 37
         versionCode = 1004
         versionName = "1.0.04"
         vectorDrawables { useSupportLibrary = true }
