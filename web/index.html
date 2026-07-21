@@ -171,12 +171,12 @@
   // ── 구름: 실제 웹앱 Clouds.tsx 와 동일한 블롭 구성(개수·비율만 살짝 확대) ──
   var cloudsEl = document.getElementById('clouds');
   var blobs = [
-    { top: '4%',  size: 720, dur: 78,  delay: 0,   o: 0.9  },
-    { top: '15%', size: 560, dur: 100, delay: -30, o: 0.7  },
-    { top: '30%', size: 820, dur: 125, delay: -60, o: 0.55 },
-    { top: '40%', size: 500, dur: 90,  delay: -15, o: 0.6  },
+    { top: '4%',  size: 720*2, dur: 78,  delay: 0,   o: 0.9  },
+    { top: '15%', size: 560*2, dur: 100, delay: -30, o: 0.7  },
+    { top: '30%', size: 820*2, dur: 125, delay: -60, o: 0.55 },
+    { top: '40%', size: 500*2, dur: 90,  delay: -15, o: 0.6  },
   ];
-  var cloudScale = Math.max(0.6, Math.min(2.2, window.innerWidth / 1600));
+  var cloudScale = Math.max(0.6, Math.min(2.2, 1.6 / (window.devicePixelRatio || 1)));
   blobs.forEach(function (b) {
     var el = document.createElement('div');
     el.className = 'cloud-blob';
@@ -199,7 +199,9 @@
   var W, H, scale;
   function resize() {
     W = window.innerWidth; H = window.innerHeight;
-    scale = Math.max(0.6, Math.min(2.2, W / 1600));   // 창 폭 기준 비례, 극단값 방지
+    // 낮은 DPI(저해상도 큰 모니터)일수록 배율을 키우고,
+    // 높은 DPI(레티나 등)일수록 배율을 낮춤 — 창 크기와는 무관
+    scale = Math.max(0.6, Math.min(2.2, 1.6 / (window.devicePixelRatio || 1)));
     canvas.width = W * dpr; canvas.height = H * dpr;
     canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -207,7 +209,7 @@
   window.addEventListener('resize', resize);
   resize();
 
-  var STAR_POOL = 340;
+  var STAR_POOL = 1200; 
   var stars = [];
   for (var i = 0; i < STAR_POOL; i++) {
     stars.push({
@@ -222,8 +224,10 @@
   function frame(now) {
     var t = now / 1000;
     ctx.clearRect(0, 0, W, H);
+    var area = W * H;
+    var count = Math.min(stars.length, Math.round(area / 1300));   // 면적/밀도계수 = 개수
     var fadeStart = H * 0.86;
-    for (var i = 0; i < stars.length; i++) {
+    for (var i = 0; i < count; i++) {
       var s = stars[i];
       var tw = reduceMotion ? 0.85 : 0.55 + 0.45 * Math.sin(t * s.speed + s.phase);
       var a = Math.max(0, Math.min(1, s.baseA * tw));
