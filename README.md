@@ -4,9 +4,11 @@
 
 오늘 밤의 별 관측 조건을 0–100%로 수치화합니다.
 
-[iOS/macOS](https://apps.apple.com/kr/app/별바라기-별-관측-지수/id6791649030)
-[Android](https://play.google.com/store/apps/details?id=com.songsari.starflower)
-[Web](https://star.wolilab.com)
+[iOS/macOS 다운로드](https://apps.apple.com/kr/app/별바라기-별-관측-지수/id6791649030)
+
+[Android 다운로드](https://play.google.com/store/apps/details?id=com.songsari.starflower)
+
+[웹에서 사용](https://star.wolilab.com)
 
 ## 소개
 
