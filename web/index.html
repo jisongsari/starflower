@@ -130,8 +130,8 @@
   footer a:hover { opacity: 0.85; }
 
   @media (max-width: 480px) {
-    .logo-mark { height: 56px; }
-    .subtitle { font-size: 15px; }
+    .logo-mark { height: 70px; }
+    .subtitle { font-size: 17px; }
     .buttons { margin-top: 26px; }
   }
 
@@ -176,12 +176,14 @@
     { top: '30%', size: 820, dur: 125, delay: -60, o: 0.55 },
     { top: '40%', size: 500, dur: 90,  delay: -15, o: 0.6  },
   ];
+  var cloudScale = Math.max(0.6, Math.min(2.2, window.innerWidth / 1600));
   blobs.forEach(function (b) {
     var el = document.createElement('div');
     el.className = 'cloud-blob';
     el.style.top = b.top;
-    el.style.width = b.size + 'px';
-    el.style.height = (b.size * 0.5) + 'px';
+    var w = b.size * cloudScale;
+    el.style.width = w + 'px';
+    el.style.height = (w * 0.5) + 'px';
     el.style.opacity = b.o;
     el.style.animationDuration = b.dur + 's';
     el.style.animationDelay = b.delay + 's';
@@ -194,9 +196,10 @@
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var W, H;
+  var W, H, scale;
   function resize() {
     W = window.innerWidth; H = window.innerHeight;
+    scale = Math.max(0.6, Math.min(2.2, W / 1600));   // 창 폭 기준 비례, 극단값 방지
     canvas.width = W * dpr; canvas.height = H * dpr;
     canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -228,7 +231,7 @@
       if (y > fadeStart) a *= Math.max(0, 1 - (y - fadeStart) / (H - fadeStart));
       if (a <= 0.01) continue;
 
-      var r = s.r * dpr;
+      var r = s.r * dpr * scale;
       if (s.r > 0.5) {
         var h = r * 3.2;
         var halo = ctx.createRadialGradient(x, y, 0, x, y, h);
