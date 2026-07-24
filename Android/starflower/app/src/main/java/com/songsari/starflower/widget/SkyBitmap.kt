@@ -43,20 +43,19 @@ fun renderSkyBitmap(
     paint.shader = null
 
     // 맑은 밤: 작은 별 다수 (자연스러운 밤하늘)
-    // 별: 앱과 동일하게 SkyTheme 의 starOpacity 로 결정 (밤·일출·일몰 공통)
+    // 별: 앱과 동일하게 SkyTheme 의 starOpacity 로 개수·밝기 모두 결정 (밤·일출·일몰 공통)
     val starOp = SkyThemeProvider.theme(condition, daypart).starOpacity
     if (starOp > 0.02) {
         val rnd = Random(42)
         val area = w.toDouble() * h.toDouble()
-        val count = (area / 6000.0).toInt().coerceIn(0, 600)   // 앱과 동일 밀도
+        val count = (area / 6000.0 * starOp).toInt().coerceIn(0, 600)   // ★ starOp 반영
         for (i in 0 until count) {
-            val sr = Math.pow(rnd.nextDouble(0.0, 1.0), 2.2) * 0.75 + 0.03  // 앱과 동일 크기식
+            val sr = Math.pow(rnd.nextDouble(0.0, 1.0), 2.2) * 0.75 + 0.03
             val x = (rnd.nextDouble(0.0, 1.0) * w).toFloat()
             val y = (rnd.nextDouble(0.0, 0.92) * h).toFloat()
-            val a = rnd.nextDouble(0.35, 0.95).toFloat()
-            val r = (sr * density).toFloat()                    // ★ 앱과 동일: 밀도 곱
+            val a = (rnd.nextDouble(0.35, 0.95) * starOp).toFloat().coerceIn(0f, 1f)   // ★ starOp 반영
+            val r = (sr * density).toFloat()
 
-            // 빛무리 (앱과 동일: sr > 0.55, 반경 r*3.6, rgba(205,222,255,a*0.55)→투명)
             if (sr > 0.55) {
                 val hh = r * 3.6f
                 paint.shader = RadialGradient(
@@ -70,7 +69,6 @@ fun renderSkyBitmap(
                 canvas.drawCircle(x, y, hh, paint)
                 paint.shader = null
             }
-            // 별 본체 (앱과 동일: 흰색)
             paint.color = Color.argb((a * 255).toInt(), 255, 255, 255)
             canvas.drawCircle(x, y, r, paint)
         }

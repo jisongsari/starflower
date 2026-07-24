@@ -6,21 +6,184 @@
     android:background="@drawable/widget_preview_bg"
     android:padding="16dp"
     android:gravity="center_vertical">
-    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+
+    <!-- 왼쪽: 위치·지수·한줄평·시각 -->
+    <LinearLayout
+        android:layout_width="118dp" android:layout_height="wrap_content"
         android:orientation="vertical">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="수원시" android:textColor="#CCFFFFFF" android:textSize="14sp" />
-        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <TextView
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="수원시" android:textColor="#CCFFFFFF" android:textSize="14sp"
+            android:fontFamily="@font/pretendard_semibold" />
+        <LinearLayout
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:orientation="horizontal" android:layout_marginTop="6dp" android:baselineAligned="false">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="72" android:textColor="#FFFFFFFF" android:textSize="54sp" android:fontFamily="sans-serif-thin" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="%" android:textColor="#D9FFFFFF" android:textSize="22sp" android:layout_marginTop="9dp" />
+            <TextView
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="72" android:textColor="#FFFFFFFF" android:textSize="54sp"
+                android:fontFamily="@font/pretendard_thin" />
+            <TextView
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="%" android:textColor="#D9FFFFFF" android:textSize="21sp"
+                android:layout_marginTop="9dp" android:fontFamily="@font/pretendard_regular" />
         </LinearLayout>
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="관측하기 좋아요" android:textColor="#D9FFFFFF" android:textSize="12sp" android:layout_marginTop="5dp" />
+        <LinearLayout
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginTop="5dp">
+            <ImageView
+                android:layout_width="13dp" android:layout_height="13dp"
+                android:src="@drawable/ic_w_clear" android:layout_marginEnd="5dp" />
+            <TextView
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="관측하기 좋아요" android:textColor="#D9FFFFFF" android:textSize="12sp"
+                android:fontFamily="@font/pretendard_medium" />
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="21:30" android:textColor="#8CFFFFFF" android:textSize="11sp"
+            android:layout_marginTop="6dp" android:fontFamily="@font/pretendard_medium" />
     </LinearLayout>
-    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-        android:gravity="end" android:text="🌙  달·월출월몰·상세"
-        android:textColor="#99FFFFFF" android:textSize="12sp" android:layout_marginStart="16dp" />
+
+    <!-- 오른쪽: 달 + 조도/위상 + 월출월몰, 그리고 상세 그리드 -->
+    <LinearLayout
+        android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+        android:orientation="vertical" android:layout_marginStart="16dp">
+
+        <!-- 달 + 조도/위상 + 월출월몰 -->
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="46dp" android:layout_height="46dp"
+                android:src="@drawable/widget_preview_moon" />
+            <LinearLayout
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:orientation="vertical" android:layout_marginStart="8dp">
+                <TextView
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="23%" android:textColor="#FFFFFFFF" android:textSize="20sp"
+                    android:fontFamily="@font/pretendard_regular" />
+                <TextView
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="상현달" android:textColor="#9EFFFFFF" android:textSize="12sp"
+                    android:fontFamily="@font/pretendard_regular" />
+            </LinearLayout>
+            <TextView android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
+            <LinearLayout
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="월출 " android:textColor="#8CFFFFFF" android:textSize="11sp"
+                        android:fontFamily="@font/pretendard_regular" />
+                    <TextView
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="19:42" android:textColor="#FFFFFFFF" android:textSize="13sp"
+                        android:fontFamily="@font/pretendard_medium" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginTop="4dp">
+                    <TextView
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="월몰 " android:textColor="#8CFFFFFF" android:textSize="11sp"
+                        android:fontFamily="@font/pretendard_regular" />
+                    <TextView
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="06:15" android:textColor="#FFFFFFFF" android:textSize="13sp"
+                        android:fontFamily="@font/pretendard_medium" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 상세 그리드 1행: 일몰 · 일출 · 운량 · 습도 -->
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:layout_marginTop="11dp">
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="일몰" android:textColor="#94FFFFFF" android:textSize="10sp"
+                    android:fontFamily="@font/pretendard_regular" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="19:24" android:textColor="#FFFFFFFF" android:textSize="12sp"
+                    android:layout_marginTop="2dp" android:fontFamily="@font/pretendard_medium" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="일출" android:textColor="#94FFFFFF" android:textSize="10sp"
+                    android:fontFamily="@font/pretendard_regular" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="05:41" android:textColor="#FFFFFFFF" android:textSize="12sp"
+                    android:layout_marginTop="2dp" android:fontFamily="@font/pretendard_medium" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="운량" android:textColor="#94FFFFFF" android:textSize="10sp"
+                    android:fontFamily="@font/pretendard_regular" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="18%" android:textColor="#FFFFFFFF" android:textSize="12sp"
+                    android:layout_marginTop="2dp" android:fontFamily="@font/pretendard_medium" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="습도" android:textColor="#94FFFFFF" android:textSize="10sp"
+                    android:fontFamily="@font/pretendard_regular" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="52%" android:textColor="#FFFFFFFF" android:textSize="12sp"
+                    android:layout_marginTop="2dp" android:fontFamily="@font/pretendard_medium" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 상세 그리드 2행: 풍속 · 기압 · 미세먼지 · 기온 -->
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:layout_marginTop="9dp">
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="풍속" android:textColor="#94FFFFFF" android:textSize="10sp"
+                    android:fontFamily="@font/pretendard_regular" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="2.3㎧" android:textColor="#FFFFFFFF" android:textSize="12sp"
+                    android:layout_marginTop="2dp" android:fontFamily="@font/pretendard_medium" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="기압" android:textColor="#94FFFFFF" android:textSize="10sp"
+                    android:fontFamily="@font/pretendard_regular" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="1013h" android:textColor="#FFFFFFFF" android:textSize="12sp"
+                    android:layout_marginTop="2dp" android:fontFamily="@font/pretendard_medium" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="미세먼지" android:textColor="#94FFFFFF" android:textSize="10sp"
+                    android:fontFamily="@font/pretendard_regular" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="15㎍" android:textColor="#FFFFFFFF" android:textSize="12sp"
+                    android:layout_marginTop="2dp" android:fontFamily="@font/pretendard_medium" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center_horizontal">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="기온" android:textColor="#94FFFFFF" android:textSize="10sp"
+                    android:fontFamily="@font/pretendard_regular" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="12°" android:textColor="#FFFFFFFF" android:textSize="12sp"
+                    android:layout_marginTop="2dp" android:fontFamily="@font/pretendard_medium" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
