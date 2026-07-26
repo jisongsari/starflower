@@ -30,8 +30,8 @@ struct SkyBackgroundView: View {
     private var cloudOpacity: Double {
         if coverage <= 0 { return 0 }   // 구름 한 점 없음
         let base = theme.cloudOpacity
-        if base <= 0.03 { return coverage * 0.5 }
-        return min(1, base * (0.4 + 0.6 * coverage))
+        if base <= 0.03 { return 0.5 }
+        return min(1, base)
     }
 
     var body: some View {
