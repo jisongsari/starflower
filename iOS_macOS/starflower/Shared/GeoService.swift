@@ -6,253 +6,184 @@
 //
 
 import Foundation
+import MapKit
 
 final class GeoService {
     static let shared = GeoService()
     private init() {}
-    private let session = URLSession.shared
 
-    // 행정 접미사 (긴 것부터 검사해야 '광역시'가 '시'보다 먼저 떨어진다)
-    private let adminSuffixes = [
-        "특별자치시","특별자치도","광역시","특별시","도",
-        "시","군","구","동","읍","면","리","가"
-    ]
+    // 생활 POI 제외 필터: 음식점·카페·미용실·생활체육시설 등은 걸러내고
+    // 랜드마크(타워·테마파크·박물관·공원·천문대 등)는 통과시킨다.
+    // '유명한 것 우선'은 MapKit 자동완성 랭킹이 담당.
+    fileprivate static let poiFilter = MKPointOfInterestFilter(excluding: [
+        // 생활 편의·금융·행정
+        .atm, .bank, .mailbox, .postOffice, .police, .fireStation, .restroom,
+        // 음식·주류
+        .bakery, .brewery, .cafe, .distillery, .foodMarket, .restaurant,
+        .winery, .nightlife,
+        // 상점·서비스
+        .store, .beauty, .spa, .laundry, .animalService,
+        // 교통·차량
+        .carRental, .automotiveRepair, .evCharger, .gasStation, .parking,
+        .publicTransport,
+        // 의료·교육
+        .hospital, .pharmacy, .school, .university, .library,
+        // 숙박·생활체육·오락
+        .hotel, .fitnessCenter, .movieTheater,
+        .bowling, .goKart, .miniGolf, .skatePark, .skating,
+        .baseball, .basketball, .tennis, .volleyball,
+        .swimming, .golf,
+    ])
 
-    private func isKorean(_ s: String) -> Bool {
-        s.unicodeScalars.contains {
-            ($0.value >= 0xAC00 && $0.value <= 0xD7A3) ||
-            ($0.value >= 0x1100 && $0.value <= 0x11FF) ||
-            ($0.value >= 0x3130 && $0.value <= 0x318F)
-        }
-    }
+    // 이스터에그: 학교 카테고리는 제외 대상이지만 경기과학고만 예외 통과
+    private let easterEggTriggers = ["경기과학고등학교", "경기과학", "경기과고", "경곽", "송죽학", "펑죽", "SRC", "학술정보관", "우정1관", "우정2관", "아름관", "창조관", "학습관"]
+    private let easterEggQuery = "경기과학고등학교"
 
     func search(query: String) async -> [GeoResult] {
         let q = query.trimmingCharacters(in: .whitespaces)
         guard q.count >= 2 else { return [] }
 
-        // Photon: 자동완성형 접두 일치 (위치 편향 없음 — 편향은 시골 소지명을
-        //         밀어올리는 역효과가 있어 제거. 한글 매칭 자체가 국내 한정이라 불필요)
-        // Open-Meteo: 한글 외국 지명 + 접미사 변형으로 동·리 단위 보강
-        async let ph = searchPhoton(q)
-        async let om = searchOpenMeteoExpanded(q)
-        let phResults = (try? await ph) ?? []
-        let omResults = (try? await om) ?? []
-        return merge(query: q, lists: [phResults, omResults])
-    }
+        // 이스터에그 검색은 일반 검색과 병렬로
+        let normalized = q.replacingOccurrences(of: " ", with: "")
+        let isEasterEgg = easterEggTriggers.contains {
+            normalized.localizedCaseInsensitiveContains($0)
+        }
+        async let egg: GeoResult? = isEasterEgg ? searchEasterEgg() : nil
 
-    // ── 병합·랭킹 ─────────────────────────────────────────
-    private func merge(query: String, lists: [[GeoResult]]) -> [GeoResult] {
-        // 1) 키 기준 1차 중복 제거 (입력 순서 유지)
+        // 1) 자동완성 후보 (지명 + 랜드마크 POI)
+        let completions = (try? await SearchCompleter.complete(q)) ?? []
+
+        // 2) 상위 후보만 좌표 해석 (후보당 검색 1회이므로 8개로 제한, 병렬)
+        let top = Array(completions.prefix(8))
+        let resolved: [GeoResult] = await withTaskGroup(of: (Int, GeoResult?).self) { group in
+            for (idx, c) in top.enumerated() {
+                group.addTask { [self] in (idx, await resolve(completion: c)) }
+            }
+            var slots = [GeoResult?](repeating: nil, count: top.count)
+            for await (idx, r) in group { slots[idx] = r }
+            return slots.compactMap { $0 }   // Apple 랭킹 순서 유지
+        }
+
+        // 3) 이스터에그를 최상단에 + 중복 제거 + 6개 제한
+        var merged = resolved
+        if let eggResult = await egg {
+            merged.insert(eggResult, at: 0)
+        }
         var seen = Set<String>()
-        var deduped: [GeoResult] = []
-        for r in lists.flatMap({ $0 }) {
+        var out: [GeoResult] = []
+        for r in merged {
             let key = "\(r.name)|\(r.admin1 ?? "")|\(r.country ?? "")"
             if seen.contains(key) { continue }
             seen.insert(key)
-            deduped.append(r)
-        }
-
-        // 2) (명칭 일치도 → 행정 단위 크기 → 원래 순서) 로 정렬
-        //    예: '역곡' 검색 시 역곡동(가중치 3)이 역곡리(1)보다 위
-        let sorted = deduped.enumerated()
-            .sorted { a, b in
-                let sa = matchScore(a.element.name, query: query)
-                let sb = matchScore(b.element.name, query: query)
-                if sa != sb { return sa > sb }
-                let wa = levelWeight(a.element.name)
-                let wb = levelWeight(b.element.name)
-                if wa != wb { return wa > wb }
-                return a.offset < b.offset
-            }
-            .map { $0.element }
-
-        // 3) 접미사 제거 후 이름이 같고 좌표가 근접한 항목 제거
-        var out: [GeoResult] = []
-        for r in sorted {
-            let n = stripAdminSuffix(r.name)
-            let isDup = out.contains {
-                stripAdminSuffix($0.name) == n &&
-                abs($0.latitude - r.latitude) < 0.25 &&
-                abs($0.longitude - r.longitude) < 0.25
-            }
-            if isDup { continue }
             out.append(r)
             if out.count >= 6 { break }
         }
         return out
     }
 
-    /// 3: 정확 일치(접미사 무시), 2: 접두 일치, 1: 포함, 0: 무관
-    private func matchScore(_ name: String, query: String) -> Int {
-        if name == query { return 3 }
-        let n = stripAdminSuffix(name)
-        let qn = stripAdminSuffix(query)
-        if n == qn { return 3 }
-        if name.hasPrefix(query) || n.hasPrefix(qn) { return 2 }
-        if name.contains(query) { return 1 }
-        return 0
+    // ── 완성 후보 → GeoResult ─────────────────────────────
+    private func resolve(completion: MKLocalSearchCompletion) async -> GeoResult? {
+        let search = MKLocalSearch(request: MKLocalSearch.Request(completion: completion))
+        guard let item = try? await search.start().mapItems.first else { return nil }
+        return makeResult(from: item, fallbackName: completion.title)
     }
 
-    /// 행정 단위 크기 가중치 (동점 정렬용)
-    private func levelWeight(_ name: String) -> Int {
-        for suf in ["특별자치도"] where name.hasSuffix(suf) { return 8 }
-        for suf in ["특별자치시","광역시","특별시"] where name.hasSuffix(suf) { return 7 }
-        if name.hasSuffix("도") { return 8 }
-        if name.hasSuffix("시") { return 6 }
-        if name.hasSuffix("군") { return 5 }
-        if name.hasSuffix("구") { return 4 }
-        if name.hasSuffix("동") || name.hasSuffix("읍") { return 3 }
-        if name.hasSuffix("면") { return 2 }
-        if name.hasSuffix("리") || name.hasSuffix("가") { return 1 }
-        return 4   // 접미사 없음(외국 도시 등)은 중간
+    // ── 이스터에그: POI 필터 없이 직접 검색 ───────────────
+    private func searchEasterEgg() async -> GeoResult? {
+        let request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = easterEggQuery
+        request.resultTypes = .pointOfInterest
+        // pointOfInterestFilter 미지정 = 전 카테고리 허용 (school 포함)
+        guard let items = try? await MKLocalSearch(request: request).start().mapItems
+        else { return nil }
+        guard let item = items.first(where: { ($0.name ?? "").contains("경기과학고") })
+        else { return nil }
+        return makeResult(from: item, fallbackName: easterEggQuery, isPOI: true)
     }
 
-    private func stripAdminSuffix(_ s: String) -> String {
-        for suf in adminSuffixes where s.count > suf.count && s.hasSuffix(suf) {
-            return String(s.dropLast(suf.count))
+    // ── MKMapItem → GeoResult 공통 변환 ───────────────────
+    private func makeResult(from item: MKMapItem,
+                            fallbackName: String,
+                            isPOI: Bool = false) -> GeoResult? {
+        let pm = item.placemark
+        let poi = isPOI || item.pointOfInterestCategory != nil
+
+        // 지명 결과는 도로·번지 단위 주소 제외.
+        // POI 는 소재지 도로명을 갖는 게 정상이므로 이 가드를 우회한다.
+        if !poi {
+            guard pm.thoroughfare == nil, pm.subThoroughfare == nil else { return nil }
         }
-        return s
-    }
 
-    /// 결과 자체가 시 미만(구·동·읍·면·리) 등급인지 판별.
-    /// 시 미만이면 상위 지명으로 시(city), 시·군이면 도(state)를 쓴다.
-    private func isSubCity(name: String, type: String, osmValue: String) -> Bool {
-        // Photon 타입이 도시 이상이라고 말하면 그대로 신뢰
-        // ('대구'처럼 이름이 우연히 '구'로 끝나는 도시를 접미사 규칙에서 보호)
-        if ["city", "state", "county", "country"].contains(type) { return false }
-        if isKorean(name) {
-            for suf in ["특별자치시","특별자치도","광역시","특별시"]
-                where name.hasSuffix(suf) { return false }
-            if name.hasSuffix("시") || name.hasSuffix("군") || name.hasSuffix("도") {
-                return false
-            }
-            for suf in ["구","동","읍","면","리","가"] where name.hasSuffix(suf) {
-                return true
-            }
+        let coord = pm.coordinate
+        guard CLLocationCoordinate2DIsValid(coord) else { return nil }
+
+        let name = item.name
+            ?? pm.name
+            ?? fallbackName.components(separatedBy: ",").first?
+                .trimmingCharacters(in: .whitespaces)
+            ?? fallbackName
+
+        // 행정 위계 사다리 (좁은 단위 → 넓은 단위, nil·중복 제거)
+        // 예: 역곡동 → [역곡동, 부천시, 경기도] / 남산타워 → [용산동2가, 서울특별시]
+        var ladder: [String] = []
+        for step in [pm.subLocality, pm.locality, pm.subAdministrativeArea, pm.administrativeArea] {
+            if let s = step, !s.isEmpty, !ladder.contains(s) { ladder.append(s) }
         }
-        return ["district","locality","other"].contains(type)
-            || ["suburb","neighbourhood","quarter","borough",
-                "village","hamlet","city_district","district"].contains(osmValue)
-    }
 
-    // ── Photon ────────────────────────────────────────────
-    private func searchPhoton(_ q: String) async throws -> [GeoResult] {
-        var c = URLComponents(string: "https://photon.komoot.io/api/")!
-        c.queryItems = [
-            .init(name: "q", value: q),
-            .init(name: "limit", value: "10"),
-            .init(name: "lang", value: isKorean(q) ? "default" : "en"),
-        ]
-
-        var req = URLRequest(url: c.url!)
-        req.setValue("Starflower/1.0 (stargazing app)", forHTTPHeaderField: "User-Agent")
-
-        let (data, resp) = try await session.data(for: req)
-        guard (resp as? HTTPURLResponse)?.statusCode == 200 else { throw GeoError.httpError }
-        let r = try JSONDecoder().decode(PhotonResponse.self, from: data)
-
-        var out: [GeoResult] = []
-        for f in r.features {
-            let p = f.properties
-            let key = p.osmKey ?? ""
-            let type = p.type ?? ""
-            guard key == "place" || key == "boundary" else { continue }
-            guard type != "street", type != "house" else { continue }
-            guard f.geometry.coordinates.count >= 2, let name = p.name, !name.isEmpty
-            else { continue }
-            let lon = f.geometry.coordinates[0]
-            let lat = f.geometry.coordinates[1]
-
-            // 상위 지명: 시 미만 등급이면 시(city) 우선, 시·군 등급이면 도(state)
-            let admin1: String?
-            if isSubCity(name: name, type: type, osmValue: p.osmValue ?? "") {
-                admin1 = p.city ?? p.district ?? p.county ?? p.state
-            } else {
-                admin1 = p.state ?? p.county
-            }
-
-            out.append(GeoResult(id: p.osmId ?? (name.hashValue & 0x7FFFFFFF),
-                                 name: name,
-                                 admin1: admin1,
-                                 country: p.country,
-                                 latitude: lat, longitude: lon))
+        // 상위 지명: 지명은 사다리에서 자기 바로 위 단계,
+        // POI 는 사다리의 가장 좁은 단계 (자신은 사다리에 없으므로)
+        let admin1: String?
+        if let idx = ladder.firstIndex(of: name), idx + 1 < ladder.count {
+            admin1 = ladder[idx + 1]
+        } else {
+            admin1 = ladder.first { $0 != name }
         }
-        return out
-    }
 
-    // ── Open-Meteo ────────────────────────────────────────
-    /// 접미사 없는 한글 검색어는 행정 접미사 변형을 함께 병렬 조회.
-    /// ('역곡' → '역곡동', '역곡리' 등 동·리 단위까지 직접 커버)
-    private func searchOpenMeteoExpanded(_ q: String) async throws -> [GeoResult] {
-        var queries = [q]
-        if isKorean(q), stripAdminSuffix(q) == q {
-            queries += ["시", "군", "구", "동", "읍", "면", "리", "도"].map { q + $0 }
-        }
-        return await withTaskGroup(of: (Int, [GeoResult]).self) { group in
-            for (idx, query) in queries.enumerated() {
-                group.addTask { [self] in
-                    (idx, (try? await searchOpenMeteo(query)) ?? [])
-                }
-            }
-            var buckets = [[GeoResult]](repeating: [], count: queries.count)
-            for await (idx, r) in group { buckets[idx] = r }
-            return buckets.flatMap { $0 }
-        }
-    }
+        // 세션 내 리스트 식별용 ID (이름+좌표 기반)
+        var hasher = Hasher()
+        hasher.combine(name)
+        hasher.combine(Int(coord.latitude * 1000))
+        hasher.combine(Int(coord.longitude * 1000))
 
-    private func searchOpenMeteo(_ q: String) async throws -> [GeoResult] {
-        var c = URLComponents(string: "https://geocoding-api.open-meteo.com/v1/search")!
-        c.queryItems = [
-            .init(name: "name", value: q),
-            .init(name: "count", value: "6"),
-            .init(name: "language", value: "ko"),
-            .init(name: "format", value: "json"),
-        ]
-        let (data, _) = try await session.data(from: c.url!)
-        let r = try JSONDecoder().decode(OpenMeteoGeoResponse.self, from: data)
-        return r.results?.map { item in
-            // 상위 지명: 시 미만 등급이면 admin2(시·군) 우선, 아니면 admin1(도)
-            let admin1: String?
-            if isSubCity(name: item.name, type: "", osmValue: "") {
-                admin1 = item.admin2 ?? item.admin1
-            } else {
-                admin1 = item.admin1
-            }
-            return GeoResult(id: item.id, name: item.name, admin1: admin1,
-                             country: item.country,
-                             latitude: item.latitude, longitude: item.longitude)
-        } ?? []
+        return GeoResult(id: hasher.finalize(),
+                         name: name,
+                         admin1: admin1,
+                         country: pm.country,
+                         latitude: coord.latitude,
+                         longitude: coord.longitude)
     }
 }
 
-// ── 응답 구조 ─────────────────────────────────────────────
-private struct PhotonResponse: Decodable { let features: [PhotonFeature] }
-private struct PhotonFeature: Decodable {
-    let geometry: PhotonGeometry
-    let properties: PhotonProps
-}
-private struct PhotonGeometry: Decodable { let coordinates: [Double] }  // [lon, lat]
-private struct PhotonProps: Decodable {
-    let osmId: Int?
-    let name: String?
-    let country: String?
-    let state: String?
-    let county: String?
-    let city: String?
-    let district: String?
-    let osmKey: String?
-    let osmValue: String?
-    let type: String?
-    enum CodingKeys: String, CodingKey {
-        case osmId = "osm_id"
-        case name, country, state, county, city, district, type
-        case osmKey = "osm_key"
-        case osmValue = "osm_value"
+// ── MKLocalSearchCompleter 일회성 래퍼 ────────────────────
+// (델리게이트 기반 API 를 async 한 번 호출로 감싼다. 검색마다 새 인스턴스)
+@MainActor
+private final class SearchCompleter: NSObject, MKLocalSearchCompleterDelegate {
+    private let completer = MKLocalSearchCompleter()
+    private var continuation: CheckedContinuation<[MKLocalSearchCompletion], Error>?
+
+    static func complete(_ fragment: String) async throws -> [MKLocalSearchCompletion] {
+        try await SearchCompleter().run(fragment)
+    }
+
+    private func run(_ fragment: String) async throws -> [MKLocalSearchCompletion] {
+        try await withCheckedThrowingContinuation { cont in
+            continuation = cont
+            completer.delegate = self
+            completer.resultTypes = [.address, .pointOfInterest]   // 지명 + 랜드마크
+            completer.pointOfInterestFilter = GeoService.poiFilter
+            completer.queryFragment = fragment
+        }
+    }
+
+    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        continuation?.resume(returning: completer.results)
+        continuation = nil
+    }
+
+    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        continuation?.resume(throwing: error)
+        continuation = nil
     }
 }
-private struct OpenMeteoGeoResponse: Decodable { let results: [OpenMeteoGeoItem]? }
-private struct OpenMeteoGeoItem: Decodable {
-    let id: Int; let name: String; let latitude: Double; let longitude: Double
-    let country: String?; let admin1: String?; let admin2: String?
-}
+
 enum GeoError: Error { case httpError }

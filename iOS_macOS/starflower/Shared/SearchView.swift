@@ -55,7 +55,7 @@ struct SearchView: View {
                     hintView(h); Spacer()
                 } else if query.trimmingCharacters(in: .whitespaces).count < 2 {
                     if recents.isEmpty {
-                        hintView("관측할 지역을 검색해 보세요.\n정확한 결과를 위해 수원시, 제주시처럼 '시·군·구'까지 입력해 주세요.")
+                        hintView("관측할 지역을 검색해 보세요.\n주요 랜드마크로도 검색이 가능합니다.")
                         Spacer()
                     } else {
                         recentListView
