@@ -10,11 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.songsari.starflower.ui.screens.MainScreen
 import com.songsari.starflower.ui.theme.StarflowerTheme
+import com.songsari.starflower.data.GeoService
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        GeoService.init(this)
         setContent {
             StarflowerTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = Color.Transparent) {
