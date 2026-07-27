@@ -36,7 +36,7 @@ struct SkyThemeProvider {
     static func night(_ c: SkyCondition) -> SkyTheme {
         switch c {
         case .clear:    return .init(starOpacity: 1,    cloudOpacity: 0,    cloudTint: .rgba(180,190,230,0.5),  showMoon: true)
-        case .partly:   return .init(starOpacity: 0.5,  cloudOpacity: 0.6, cloudTint: .rgba(150,165,205,0.55), showMoon: true)
+        case .partly:   return .init(starOpacity: 0.5,  cloudOpacity: 0.5, cloudTint: .rgba(150,165,205,0.55), showMoon: true)
         case .cloudy:   return .init(starOpacity: 0.14, cloudOpacity: 0.78, cloudTint: .rgba(120,132,158,0.7),  showMoon: false)
         case .overcast: return .init(starOpacity: 0,    cloudOpacity: 1,    cloudTint: .rgba(108,116,130,0.8),  showMoon: false)
         case .fog:      return .init(starOpacity: 0,    cloudOpacity: 0.9,  cloudTint: .rgba(150,148,166,0.7),  showMoon: false)

@@ -47,7 +47,7 @@ fun SkyBackground(
         if (coverage <= 0.0) 0.0
         else {
             val base = theme.cloudOpacity
-            if (base <= 0.03) coverage * 0.5 else min(1.0, base * (0.4 + 0.6 * coverage))
+            if (base <= 0.03) 0.5 else min(1.0, base)
         }
     }
 

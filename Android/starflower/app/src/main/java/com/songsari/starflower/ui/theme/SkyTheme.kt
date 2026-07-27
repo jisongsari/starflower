@@ -25,7 +25,7 @@ object SkyThemeProvider {
 
     private fun night(c: SkyCondition): SkyTheme = when (c) {
         SkyCondition.CLEAR -> SkyTheme(1.0, 0.0, rgba(180, 190, 230, 0.5), true)
-        SkyCondition.PARTLY -> SkyTheme(0.5, 0.42, rgba(150, 165, 205, 0.55), true)
+        SkyCondition.PARTLY -> SkyTheme(0.5, 0.5, rgba(150, 165, 205, 0.55), true)
         SkyCondition.CLOUDY -> SkyTheme(0.14, 0.78, rgba(120, 132, 158, 0.7), false)
         SkyCondition.OVERCAST -> SkyTheme(0.0, 1.0, rgba(108, 116, 130, 0.8), false)
         SkyCondition.FOG -> SkyTheme(0.0, 0.9, rgba(150, 148, 166, 0.7), false)
@@ -35,7 +35,7 @@ object SkyThemeProvider {
 
     private fun day(c: SkyCondition): SkyTheme = when (c) {
         SkyCondition.CLEAR -> SkyTheme(0.0, 0.0, Color.White.copy(alpha = 0.8f), false)
-        SkyCondition.PARTLY -> SkyTheme(0.0, 0.5, Color.White.copy(alpha = 0.92f), false)
+        SkyCondition.PARTLY -> SkyTheme(0.0, 0.75, Color.White.copy(alpha = 0.92f), false)
         SkyCondition.CLOUDY -> SkyTheme(0.0, 0.75, Color.White.copy(alpha = 0.85f), false)
         SkyCondition.OVERCAST -> SkyTheme(0.0, 1.0, Color.White.copy(alpha = 0.85f), false)
         SkyCondition.FOG -> SkyTheme(0.0, 0.9, Color.White.copy(alpha = 0.8f), false)
@@ -46,8 +46,8 @@ object SkyThemeProvider {
     private fun twilight(c: SkyCondition, dawn: Boolean): SkyTheme {
         val cloudOpacity = when (c) {
             SkyCondition.CLEAR -> 0.0
-            SkyCondition.PARTLY -> 0.55
-            else -> 0.7
+            SkyCondition.PARTLY -> 1.0
+            else -> 1.0
         }
         val starOpacity = when (c) {
             SkyCondition.CLEAR -> if (dawn) 0.9 else 1.0

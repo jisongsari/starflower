@@ -22,11 +22,11 @@ import kotlin.random.Random
 
 private data class Blob(
     val y: Double, val w: Float, val dur: Double, val o: Double,
-    val phase: Double, val jitterY: Double,
+    val phase: Double,
 )
 
 /**
- * 떠다니는 구름. iOS CloudView 이식(모바일은 창 리사이즈가 없어 단순화).
+ * 떠다니는 구름. iOS CloudView 이식.
  * 각 덩어리는 화면 밖에서 들어와 반대편 밖으로 나가며 무한 순환하고,
  * 시작 위상이 무작위라 처음부터 화면 전체에 흩어져 있다.
  * blur 대신 radial 그라데이션(색→투명)으로 부드러움을 낸다(구버전 호환).
@@ -41,16 +41,18 @@ fun CloudView(opacity: Double, tint: Color, coverage: Double, modifier: Modifier
         }
     }
 
+    // 컴포지션 진입 시마다 새로 뽑는 랜덤 블롭 풀.
+    // remember 이므로 앱 실행(화면 진입)마다 배치가 달라지고,
+    // 날씨 갱신 등 리컴포지션에는 유지되어 구름이 튀지 않는다.
+    // (iOS 의 @State 초기값 방식과 동일한 동작)
     val basePool = remember {
-        List(48) { i ->
-            val rnd = Random(i * 1013904223 + 1)
+        List(48) {
             Blob(
-                y = 0.02 + rnd.nextDouble() * 0.44,
-                w = (220 + rnd.nextDouble() * 200).toFloat(),
-                dur = 70 + rnd.nextDouble() * 60,
-                o = 0.45 + rnd.nextDouble() * 0.45,
-                phase = rnd.nextDouble(),
-                jitterY = (rnd.nextDouble() - 0.5) * 0.04,
+                y = 0.02 + Random.nextDouble() * 0.44,
+                w = (220 + Random.nextDouble() * 200).toFloat(),
+                dur = 70 + Random.nextDouble() * 56,
+                o = 0.45 + Random.nextDouble() * 0.45,
+                phase = Random.nextDouble(),
             )
         }
     }
@@ -69,7 +71,7 @@ fun CloudView(opacity: Double, tint: Color, coverage: Double, modifier: Modifier
             val travel = w + wPx
             val prog = ((t / b.dur + b.phase) % 1.0)
             val x = -wPx / 2f + travel * prog.toFloat()
-            val cy = (h * (b.y + b.jitterY)).toFloat()
+            val cy = (h * b.y).toFloat()
             val brush = Brush.radialGradient(
                 colors = listOf(tint.copy(alpha = (tint.alpha * b.o).toFloat()), Color.Transparent),
                 center = Offset(x, cy),
