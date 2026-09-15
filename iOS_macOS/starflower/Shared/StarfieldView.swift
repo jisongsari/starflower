@@ -2,17 +2,19 @@
 //  StarfieldView.swift
 //  starflower
 //
-//  Created by 양지성 on 6/19/26.
-//
 
 import SwiftUI
 
 struct StarfieldView: View {
     let opacity: Double
 
-    private let stars: [Star] = (0..<900).map { _ in
+    @ObservedObject private var gate = RenderGate.shared
+
+    /// 실행당 한 번만 생성. 인스턴스 프로퍼티였을 때는 상위 뷰가 재평가될 때마다
+    /// 난수 5400번을 다시 돌려 별자리가 통째로 바뀌었다.
+    private static let stars: [Star] = (0..<900).map { _ in
         Star(x: .random(in: 0...1), y: .random(in: 0...0.92),
-             // ▼ 별 크기: 값을 키우면 별이 커진다 (0.9 = 배율, 0.35 = 최소크기)
+             // ▼ 별 크기: 값을 키우면 별이 커진다 (0.7 = 배율, 0.2 = 최소크기)
              r: pow(Double.random(in: 0...1), 2.3) * 0.7 + 0.2,
              baseA: .random(in: 0.35...0.95),
              speed: .random(in: 0.4...2.0), phase: .random(in: 0...(2 * .pi)))
@@ -22,12 +24,15 @@ struct StarfieldView: View {
         if opacity > 0.02 {
             GeometryReader { geo in
                 let area = Double(geo.size.width) * Double(geo.size.height)
-                // ▼ 별 개수: 나누는 수가 작을수록 별이 많아진다 (1600 = 적당, 600 = 너무 많음)
-                let count = min(stars.count, Int(area / 1300.0 * opacity))
-                TimelineView(.animation) { tl in
+                // ▼ 별 개수: 나누는 수가 작을수록 별이 많아진다 (1300 = 적당, 600 = 너무 많음)
+                let count = min(Self.stars.count, Int(area / 1300.0 * opacity))
+
+                // 반짝임 주기가 3초 남짓이라 30fps로 충분하다.
+                // 120Hz 디스플레이에서 별 250개를 매 프레임 다시 그리던 비용이 1/4로 줄어든다.
+                TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: !gate.isActive)) { tl in
                     Canvas { ctx, size in
                         let t = tl.date.timeIntervalSinceReferenceDate
-                        for s in stars.prefix(count) {
+                        for s in Self.stars.prefix(count) {
                             let tw = 0.55 + 0.45 * sin(t * s.speed + s.phase)
                             let a = s.baseA * tw * opacity
                             let x = s.x * size.width, y = s.y * size.height

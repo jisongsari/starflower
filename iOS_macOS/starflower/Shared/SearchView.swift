@@ -25,7 +25,7 @@ struct SearchView: View {
             VStack(spacing: 0) {
                 HStack(spacing: 9) {
                     Image(systemName: "magnifyingglass").foregroundStyle(.white.opacity(0.7))
-                    TextField("", text: $query, prompt: Text("수원시, 제주시, 광양시 ...")
+                    TextField("", text: $query, prompt: Text("수원시, 제주시, 송죽동 ...")
                         .foregroundStyle(.white.opacity(0.5)))
                         .foregroundStyle(.white)
                         .autocorrectionDisabled()

@@ -35,9 +35,14 @@ final class GeoService {
         .swimming, .golf,
     ])
 
-    // 이스터에그: 학교 카테고리는 제외 대상이지만 경기과학고만 예외 통과
-    private let easterEggTriggers = ["경기과학고등학교", "경기과학", "경기과고", "경곽", "송죽학", "펑죽", "SRC", "학술정보관", "우정1관", "우정2관", "아름관", "창조관", "학습관"]
+    // 이스터에그 1: 학교 카테고리는 제외 대상이지만 경기과학고만 예외 통과
+    private let easterEggTriggers = ["경기과학고등학교", "경기과학", "경기과", "경기과고", "경곽", "송죽학", "펑죽", "SRC", "학술정보관", "우정1관", "우정2관", "아름관", "창조관", "학습관", "경기과학고", "경기과학고등", "경기과학고등학", "송죽학사"]
     private let easterEggQuery = "경기과학고등학교"
+
+    // 이스터에그 2: 뉴네오지구과학아지트 — 좌표는 경기과학고와 동일하되
+    // 검색·표시 이름만 다르게 뜬다. 실제 검색은 재사용하지 않고 좌표만 가져온다.
+    private let neoAgitTriggers = ["뉴네오지구과학아지트", "뉴네오아지트", "614"]
+    private let neoAgitDisplayName = "뉴네오지구과학아지트"
 
     func search(query: String) async -> [GeoResult] {
         let q = query.trimmingCharacters(in: .whitespaces)
@@ -48,7 +53,11 @@ final class GeoService {
         let isEasterEgg = easterEggTriggers.contains {
             normalized.localizedCaseInsensitiveContains($0)
         }
+        let isNeoAjit = neoAgitTriggers.contains {
+            normalized.localizedCaseInsensitiveContains($0)
+        }
         async let egg: GeoResult? = isEasterEgg ? searchEasterEgg() : nil
+        async let neoAjit: GeoResult? = isNeoAjit ? searchNeoAjit() : nil
 
         // 1) 자동완성 후보 (지명 + 랜드마크 POI)
         let completions = (try? await SearchCompleter.complete(q)) ?? []
@@ -68,6 +77,9 @@ final class GeoService {
         var merged = resolved
         if let eggResult = await egg {
             merged.insert(eggResult, at: 0)
+        }
+        if let neoAjitResult = await neoAjit {
+            merged.insert(neoAjitResult, at: 0)
         }
         var seen = Set<String>()
         var out: [GeoResult] = []
@@ -99,6 +111,23 @@ final class GeoService {
         guard let item = items.first(where: { ($0.name ?? "").contains("경기과학고") })
         else { return nil }
         return makeResult(from: item, fallbackName: easterEggQuery, isPOI: true)
+    }
+
+    // ── 이스터에그: 뉴네오지구과학아지트 (경기과학고 좌표 재사용) ──
+    private func searchNeoAjit() async -> GeoResult? {
+        guard let school = await searchEasterEgg() else { return nil }
+
+        var hasher = Hasher()
+        hasher.combine(neoAgitDisplayName)
+        hasher.combine(Int(school.latitude * 1000))
+        hasher.combine(Int(school.longitude * 1000))
+
+        return GeoResult(id: hasher.finalize(),
+                         name: neoAgitDisplayName,
+                         admin1: school.admin1,
+                         country: school.country,
+                         latitude: school.latitude,
+                         longitude: school.longitude)
     }
 
     // ── MKMapItem → GeoResult 공통 변환 ───────────────────

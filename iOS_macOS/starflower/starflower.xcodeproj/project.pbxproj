@@ -72,6 +72,7 @@
 				MoonLockView.swift,
 				MoonView.swift,
 				RecentSearchStore.swift,
+				RenderGate.swift,
 				ScoreCalculator.swift,
 				ScoreHeroView.swift,
 				SearchView.swift,

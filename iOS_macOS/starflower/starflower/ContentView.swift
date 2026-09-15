@@ -100,7 +100,7 @@ struct ContentView: View {
                     }
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, -17)
+                .padding(.top, -10)
                 Spacer()
             }
             .safeAreaPadding(.top)
