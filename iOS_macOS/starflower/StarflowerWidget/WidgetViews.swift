@@ -202,7 +202,7 @@ struct SmallWidgetView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(entry.locationName)
                 .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(.white.opacity(0.75))
+                .foregroundStyle(.white.opacity(0.75)).minimumScaleFactor(0.7)
             Spacer(minLength: 0)
             HStack(alignment: .top, spacing: 1) {
                 Text("\(entry.score)").font(.system(size: 64, weight: .thin)).foregroundStyle(.white)
