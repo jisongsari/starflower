@@ -41,12 +41,17 @@ object GeoService {
         "시", "군", "구", "동", "읍", "면", "리", "가"
     )
 
-    // 이스터에그: 트리거 포함 시 경기과학고를 결과 최상단에 삽입
+    // 이스터에그 1: 트리거 포함 시 경기과학고를 결과 최상단에 삽입
     private val easterEggTriggers = listOf(
-        "경기과학고등학교", "경기과학", "경기과고", "경곽", "송죽학", "펑죽",
-        "SRC", "학술정보관", "우정1관", "우정2관", "아름관", "창조관", "학습관"
+        "경기과학고등학교", "경기과학", "경기과", "경기과고", "경곽", "송죽학", "펑죽",
+        "SRC", "학술정보관", "우정1관", "우정2관", "아름관", "창조관", "학습관",
+        "경기과학고", "경기과학고등", "경기과학고등학", "송죽학사"
     )
     private const val EASTER_EGG_QUERY = "경기과학고등학교"
+
+    // 이스터에그 2: 뉴네오지구과학아지트 — 좌표는 경기과학고와 동일하고 이름만 다르다
+    private val neoAgitTriggers = listOf("뉴네오지구과학아지트", "뉴네오아지트", "614")
+    private const val NEO_AGIT_NAME = "뉴네오지구과학아지트"
 
     private fun isKorean(s: String): Boolean = s.any {
         val v = it.code
@@ -59,8 +64,10 @@ object GeoService {
 
         val normalized = q.replace(" ", "")
         val isEgg = easterEggTriggers.any { normalized.contains(it, ignoreCase = true) }
+        val isNeo = neoAgitTriggers.any { normalized.contains(it, ignoreCase = true) }
 
         val egg = async { if (isEgg) searchEasterEgg() else null }
+        val neo = async { if (isNeo) searchNeoAgit() else null }
         val gc = async { runCatching { geocoderSearch(q) }.getOrDefault(emptyList()) }
         val ph = async { runCatching { searchPhoton(q) }.getOrDefault(emptyList()) }
         val om = async { runCatching { searchOpenMeteoExpanded(q) }.getOrDefault(emptyList()) }
@@ -68,10 +75,12 @@ object GeoService {
         // Geocoder(구글) 결과를 동점 시 우선
         val merged = merge(q, listOf(gc.await(), ph.await(), om.await()))
 
-        val eggResult = egg.await() ?: return@coroutineScope merged
-        val eggKey = "${eggResult.name}|${eggResult.admin1 ?: ""}|${eggResult.country ?: ""}"
-        (listOf(eggResult) + merged.filterNot {
-            "${it.name}|${it.admin1 ?: ""}|${it.country ?: ""}" == eggKey
+        // iOS 와 동일한 순서: 뉴네오 → 경기과학고 → 일반 결과
+        val pinned = listOfNotNull(neo.await(), egg.await())
+        if (pinned.isEmpty()) return@coroutineScope merged
+        val pinnedKeys = pinned.map { "${it.name}|${it.admin1 ?: ""}|${it.country ?: ""}" }.toHashSet()
+        (pinned + merged.filterNot {
+            "${it.name}|${it.admin1 ?: ""}|${it.country ?: ""}" in pinnedKeys
         }).take(6)
     }
 
@@ -81,6 +90,15 @@ object GeoService {
             ?.firstOrNull { it.name.contains("경기과학고") }?.let { return it }
         return runCatching { searchPhoton(EASTER_EGG_QUERY, placesOnly = false) }.getOrNull()
             ?.firstOrNull { it.name.contains("경기과학고") }
+    }
+
+    // ── 이스터에그: 뉴네오지구과학아지트 (경기과학고 좌표 재사용) ──
+    private suspend fun searchNeoAgit(): GeoResult? {
+        val school = searchEasterEgg() ?: return null
+        val id = "$NEO_AGIT_NAME|%.3f|%.3f".format(school.latitude, school.longitude)
+            .hashCode() and 0x7FFFFFFF
+        return GeoResult(id, NEO_AGIT_NAME, school.admin1, school.country,
+            school.latitude, school.longitude)
     }
 
     // ── 병합·랭킹 (iOS 이식) ──────────────────────────────

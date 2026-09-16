@@ -12,8 +12,8 @@ android {
         applicationId = "com.songsari.starflower"
         minSdk = 31
         targetSdk = 37
-        versionCode = 1006
-        versionName = "1.0.06"
+        versionCode = 10090
+        versionName = "1.0.09"
         vectorDrawables { useSupportLibrary = true }
     }
 

@@ -27,7 +27,11 @@ import kotlin.math.roundToInt
 object WidgetRender {
 
     private fun hhmm(d: Date?): String =
-        if (d == null) "—" else SimpleDateFormat("HH:mm", Locale.US).format(d)
+        if (d == null || d.time == 0L) "--:--"
+        else SimpleDateFormat("HH:mm", Locale.US).format(d)
+
+    /** 점수 -1 은 '데이터 없음' 신호. 실제 지수는 0~100 이라 충돌하지 않는다. */
+    private fun scoreText(score: Int): String = if (score < 0) "—" else "$score"
 
     private fun w(a: Float) = Color.argb((a * 255).roundToInt(), 255, 255, 255)
 
@@ -97,8 +101,8 @@ object WidgetRender {
         drawTop(canvas, e.locationName, left, y, pLoc); y += locH + g1
 
         // 점수 + %
-        drawTop(canvas, "${e.score}", left, y, pScore)
-        val scoreW = pScore.measureText("${e.score}")
+        drawTop(canvas, scoreText(e.score), left, y, pScore)
+        val scoreW = pScore.measureText(scoreText(e.score))
         drawTop(canvas, "%", left + scoreW + 2 * d, y + scoreH * 0.16f, pPct)
         y += scoreH + g2
 
@@ -110,7 +114,7 @@ object WidgetRender {
         canvas.restore()
         y += verdH + g3
 
-        drawTop(canvas, "기온 ${e.temperature.roundToInt()}° · ${hhmm(Date())}", left, y, pBot)
+        drawTop(canvas, "기온 ${e.temperature.roundToInt()}° · ${if (e.hasData) hhmm(Date()) else "--:--"}", left, y, pBot)
         return bmp
     }
 
@@ -150,8 +154,8 @@ object WidgetRender {
         var y = (hPx - total) / 2f
 
         drawTop(canvas, e.locationName, left, y, pLoc); y += locH + g1
-        drawTop(canvas, "${e.score}", left, y, pScore)
-        val sw = pScore.measureText("${e.score}")
+        drawTop(canvas, scoreText(e.score), left, y, pScore)
+        val sw = pScore.measureText(scoreText(e.score))
         drawTop(canvas, "%", left + sw + 2 * d, y + scoreH * 0.16f, pPct)
         y += scoreH + g2
         drawWeatherIcon(context, canvas, e.condition, left, y + (verdH - iconSz) / 2f, iconSz, w(0.8f))
@@ -160,7 +164,7 @@ object WidgetRender {
         verdLayout.draw(canvas)
         canvas.restore()
         y += verdH + g3
-        drawTop(canvas, hhmm(Date()), left, y, pBot)
+        drawTop(canvas, if (e.hasData) hhmm(Date()) else "--:--", left, y, pBot)
     }
 
     private fun drawRight(context: Context, canvas: Canvas, e: WidgetEntry, x: Float, width: Float, hPx: Int, d: Float) {

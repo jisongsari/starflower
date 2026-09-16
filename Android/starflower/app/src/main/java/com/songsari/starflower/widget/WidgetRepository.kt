@@ -45,13 +45,13 @@ object WidgetRepository {
     private val isoFmt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.US).apply { timeZone = TimeZone.getDefault() }
 
     fun dummy(): WidgetEntry = WidgetEntry(
-        score = 72, locationName = "수원시",
+        score = -1, locationName = "위치 없음",
         condition = SkyCondition.CLEAR, daypart = Daypart.NIGHT,
-        moonIllum = 0.3, moonPhase = 0.2, moonAltitude = 0.5,
-        temperature = 12.0, pressure = 1013.0,
-        nightCloud = 10.0, nightHumidity = 45.0, nightWind = 2.0, nightPm25 = 15.0,
-        sunrise = Date(), sunset = Date(), moonName = "초승달",
-        moonrise = Date(), moonset = Date(), hasData = false,
+        moonIllum = 0.0, moonPhase = 0.0, moonAltitude = 0.0,
+        temperature = 0.0, pressure = 0.0,
+        nightCloud = 0.0, nightHumidity = 0.0, nightWind = 0.0, nightPm25 = 0.0,
+        sunrise = Date(0), sunset = Date(0), moonName = "데이터 없음",
+        moonrise = null, moonset = null, hasData = false,
     )
 
     /** 저장된 위치를 읽어 날씨를 받아 지수를 계산. 실패 시 dummy(hasData=false) */
@@ -60,7 +60,7 @@ object WidgetRepository {
         val lat = loc.latitude
         val lng = loc.longitude
         val wx = runCatching { WeatherService.fetchWeather(lat, lng) }.getOrNull()
-            ?: return dummy().copy(locationName = loc.name)
+            ?: return dummy()
         val air = WeatherService.fetchAir(lat, lng)
 
         val now = Date()

@@ -24,10 +24,10 @@ object ScoreCalculator {
 
     fun verdict(score: Int): String = when (score) {
         in 80..100 -> "최상의 관측 조건"
-        in 60..79 -> "관측하기 좋아요"
-        in 40..59 -> "그럭저럭 볼 만해요"
-        in 20..39 -> "관측이 어려워요"
-        else -> "오늘은 별 보기 힘들어요"
+        in 60..79  -> "관측하기 좋아요"
+        in 40..59  -> "그럭저럭 볼 만해요"
+        in 20..39  -> "관측이 어려워요"
+        else       -> if (score < 0) "네트워크 연결을 확인해주세요" else "오늘은 별 보기 힘들어요"
     }
 
     fun moonPhaseName(phase: Double): String {
