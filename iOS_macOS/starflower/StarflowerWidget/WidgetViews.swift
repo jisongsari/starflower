@@ -191,8 +191,13 @@ private func symbol(_ c: SkyCondition) -> String {
     }
 }
 private func hhmm(_ d: Date?) -> String {
-    guard let d else { return "—" }
+    guard let d, d.timeIntervalSince1970 != 0 else { return "--:--" }
     let f = DateFormatter(); f.dateFormat = "HH:mm"; return f.string(from: d)
+}
+
+// 점수 -1 은 '데이터 없음' 신호. 실제 지수는 0~100 이라 충돌하지 않는다.
+private func scoreText(_ score: Int) -> String {
+    score < 0 ? "-" : "\(score)"
 }
 
 // ── 2x2 ───────────────────────────────────────────────────
@@ -205,7 +210,7 @@ struct SmallWidgetView: View {
                 .foregroundStyle(.white.opacity(0.75)).minimumScaleFactor(0.7)
             Spacer(minLength: 0)
             HStack(alignment: .top, spacing: 1) {
-                Text("\(entry.score)").font(.system(size: 64, weight: .thin)).foregroundStyle(.white)
+                Text(scoreText(entry.score)).font(.system(size: 64, weight: .thin)).foregroundStyle(.white)
                 Text("%").font(.system(size: 24, weight: .regular))
                     .foregroundStyle(.white.opacity(0.85)).padding(.top, 10)
             }
@@ -239,7 +244,7 @@ struct MediumWidgetView: View {
                         .foregroundStyle(.white.opacity(0.75))
                     Spacer(minLength: 0)
                     HStack(alignment: .top, spacing: 1) {
-                        Text("\(entry.score)").font(.system(size: 58, weight: .thin)).foregroundStyle(.white)
+                        Text(scoreText(entry.score)).font(.system(size: 58, weight: .thin)).foregroundStyle(.white)
                         Text("%").font(.system(size: 22, weight: .regular))
                             .foregroundStyle(.white.opacity(0.85)).padding(.top, 9)
                     }
@@ -328,7 +333,7 @@ struct CircularWidgetView: View {
         ZStack {
             VStack(spacing: 0) {
                 HStack(alignment: .top, spacing: 0) {
-                    Text("\(entry.score)")
+                    Text(scoreText(entry.score))
                         .font(.system(size: 40, weight: .thin))
                         .foregroundStyle(.white)
                         .lineLimit(1)
@@ -357,7 +362,7 @@ struct RectangularWidgetView: View {
             // 윗줄: 점수 + 동네·날씨
             HStack(alignment: .center, spacing: 8) {
                 HStack(alignment: .top, spacing: 1) {
-                    Text("\(entry.score)")
+                    Text(scoreText(entry.score))
                         .font(.system(size: 40, weight: .thin))
                         .foregroundStyle(.white)
                         .minimumScaleFactor(0.9)

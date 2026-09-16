@@ -26,6 +26,7 @@ struct ScoreCalculator {
         case 60..<80:  return "관측하기 좋아요"
         case 40..<60:  return "그럭저럭 볼 만해요"
         case 20..<40:  return "관측이 어려워요"
+        case ..<0:     return "네트워크 연결을 확인해주세요"
         default:       return "오늘은 별 보기 힘들어요"
         }
     }

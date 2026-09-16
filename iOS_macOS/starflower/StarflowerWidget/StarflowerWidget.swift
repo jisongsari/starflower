@@ -36,10 +36,10 @@ struct Provider: TimelineProvider {
 
     // 프리뷰용 더미 데이터
     func placeholder(in context: Context) -> StargazingEntry {
-            dummyEntry()
+            sampleEntry()
         }
     
-    private func dummyEntry() -> StargazingEntry {
+    private func sampleEntry() -> StargazingEntry {
             StargazingEntry(
                 date: .now, score: 72, locationName: "수원시",
                 condition: .clear, daypart: .night,
@@ -50,11 +50,28 @@ struct Provider: TimelineProvider {
                 moonrise: .now, moonset: .now
             )
         }
+    
+    private func dummyEntry() -> StargazingEntry {
+            StargazingEntry(
+                date: Date(timeIntervalSince1970: 0), score: -1, locationName: "위치 없음",
+                condition: .clear, daypart: .night,
+                moonIllum: 0, moonPhase: 0, moonAltitude: 0,
+                temperature: 0, pressure: 0,
+                nightCloud: 0, nightHumidity: 0, nightWind: 0, nightPm25: 0,
+                sunrise: Date(timeIntervalSince1970: 0), sunset: Date(timeIntervalSince1970: 0),
+                moonName: "데이터 없음",
+                moonrise: nil, moonset: nil
+            )
+        }
 
     // 위젯 갤러리 미리보기용
     func getSnapshot(in context: Context,
                      completion: @escaping (StargazingEntry) -> Void) {
-        completion(placeholder(in: context))
+        if context.isPreview {
+            completion(sampleEntry())
+        } else {
+            Task { completion(await fetchEntry()) }
+        }
     }
 
     // 실제 타임라인 — 1시간마다 갱신
