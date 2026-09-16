@@ -34,6 +34,16 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C1B5775A305A603600F5F1F8 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -98,13 +108,6 @@
 			);
 			target = C1922D6E2FE523D300931906 /* StarflowerWidgetExtension */;
 		};
-		C19E976C2FEA05000051CB60 /* Exceptions for "Shared" folder in "starflower" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				MoonLockView.swift,
-			);
-			target = C1922D5C2FE516B900931906 /* starflower */;
-		};
 		C1F1CE362FEBB7E50035C211 /* Exceptions for "starflowermac" folder in "starflowermac" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -145,7 +148,6 @@
 		C1922D8D2FE524CD00931906 /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				C19E976C2FEA05000051CB60 /* Exceptions for "Shared" folder in "starflower" target */,
 				C19E96D82FE980480051CB60 /* Exceptions for "Shared" folder in "StarflowerWidgetExtension" target */,
 				C19E96D12FE980210051CB60 /* Exceptions for "Shared" folder in "starflowermac" target */,
 			);
@@ -279,6 +281,7 @@
 				C19E96722FE96BBF0051CB60 /* Sources */,
 				C19E96732FE96BBF0051CB60 /* Frameworks */,
 				C19E96742FE96BBF0051CB60 /* Resources */,
+				C1B5775A305A603600F5F1F8 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -301,7 +304,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2650;
+				LastSwiftUpdateCheck = 2700;
 				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					C1922D5C2FE516B900931906 = {
@@ -525,7 +528,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = starflower/starflower.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10080;
+				CURRENT_PROJECT_VERSION = 10090;
 				DEVELOPMENT_TEAM = XZ62U4TFQH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -541,7 +544,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.08;
+				MARKETING_VERSION = 1.0.09;
 				PRODUCT_BUNDLE_IDENTIFIER = com.songsari.star;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -565,7 +568,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = starflower/starflower.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10080;
+				CURRENT_PROJECT_VERSION = 10090;
 				DEVELOPMENT_TEAM = XZ62U4TFQH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -581,7 +584,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.08;
+				MARKETING_VERSION = 1.0.09;
 				PRODUCT_BUNDLE_IDENTIFIER = com.songsari.star;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -604,7 +607,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = StarflowerWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10080;
+				CURRENT_PROJECT_VERSION = 10090;
 				DEVELOPMENT_TEAM = XZ62U4TFQH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StarflowerWidget/Info.plist;
@@ -616,7 +619,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.08;
+				MARKETING_VERSION = 1.0.09;
 				PRODUCT_BUNDLE_IDENTIFIER = com.songsari.star.StarflowerWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -639,7 +642,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = StarflowerWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10080;
+				CURRENT_PROJECT_VERSION = 10090;
 				DEVELOPMENT_TEAM = XZ62U4TFQH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StarflowerWidget/Info.plist;
@@ -651,7 +654,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.08;
+				MARKETING_VERSION = 1.0.09;
 				PRODUCT_BUNDLE_IDENTIFIER = com.songsari.star.StarflowerWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -675,7 +678,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10080;
+				CURRENT_PROJECT_VERSION = 10090;
 				DEVELOPMENT_TEAM = XZ62U4TFQH;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -701,7 +704,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 1.0.08;
+				MARKETING_VERSION = 1.0.09;
 				PRODUCT_BUNDLE_IDENTIFIER = com.songsari.star;
 				PRODUCT_MODULE_NAME = starflowermac;
 				PRODUCT_NAME = Starflower;
@@ -725,7 +728,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10080;
+				CURRENT_PROJECT_VERSION = 10090;
 				DEVELOPMENT_TEAM = XZ62U4TFQH;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -751,7 +754,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 1.0.08;
+				MARKETING_VERSION = 1.0.09;
 				PRODUCT_BUNDLE_IDENTIFIER = com.songsari.star;
 				PRODUCT_MODULE_NAME = starflowermac;
 				PRODUCT_NAME = Starflower;

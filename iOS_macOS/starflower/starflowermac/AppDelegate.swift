@@ -2,8 +2,6 @@
 //  AppDelegate.swift
 //  starflower
 //
-//  Created by 양지성 on 6/22/26.
-//
 
 import AppKit
 import SwiftUI
@@ -11,6 +9,7 @@ import ServiceManagement
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
+        MenuBarVisibility.registerDefault()
         NSApp.setActivationPolicy(.regular)
         // 최초 실행 시 메인 창 표시
         DispatchQueue.main.async {

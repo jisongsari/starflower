@@ -6,13 +6,37 @@
 //
 
 import SwiftUI
+#if canImport(WidgetKit)
+import WidgetKit
+#endif
 
 struct MoonView: View {
     let illumination: Double
     let waxing: Bool
     let size: CGFloat
 
+    // 위젯이 아닌 곳에서는 항상 .fullColor 가 들어온다.
+    #if canImport(WidgetKit)
+    @Environment(\.widgetRenderingMode) private var renderingMode
+    #endif
+
     var body: some View {
+        #if canImport(WidgetKit)
+        if renderingMode == .fullColor {
+            colorMoon
+        } else {
+            // 투명·틴티드 렌더는 색을 버리고 알파만 마스크로 쓴다.
+            // 색으로 그린 달은 알파가 전부 1이라 흰 원 하나로 뭉개진다.
+            // MoonLockView 는 알파에 위상을 담고 있어 그대로 읽힌다.
+            MoonLockView(illumination: illumination, waxing: waxing, size: size)
+                .frame(width: size * 1.4, height: size * 1.4)
+        }
+        #else
+        colorMoon
+        #endif
+    }
+
+    private var colorMoon: some View {
         Canvas { ctx, cs in
             let k = size / 100
             let cx = cs.width / 2, cy = cs.height / 2

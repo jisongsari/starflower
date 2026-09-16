@@ -2,6 +2,8 @@
 //  RenderGate.swift
 //  starflower
 //
+//  Created by 양지성 on 9/15/26.
+//
 
 import SwiftUI
 import Combine

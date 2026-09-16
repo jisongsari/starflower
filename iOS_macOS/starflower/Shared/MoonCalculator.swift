@@ -1,3 +1,10 @@
+//
+//  MoonCalculator.swift
+//  starflower
+//
+//  Created by 양지성 on 6/20/26.
+//
+
 import Foundation
 
 struct MoonPosition {

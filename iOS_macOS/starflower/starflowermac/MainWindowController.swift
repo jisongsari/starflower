@@ -2,6 +2,8 @@
 //  MainWindowController.swift
 //  starflower
 //
+//  Created by 양지성 on 9/15/26.
+//
 
 import AppKit
 import SwiftUI
@@ -16,7 +18,9 @@ final class MainWindowController: NSObject, NSWindowDelegate {
 
         let w = window ?? makeWindow()
         if w.contentViewController == nil {
-
+            // contentViewController 를 붙이면 AppKit 이 그 뷰의 fittingSize 로
+            // 창을 다시 맞춘다. 닫을 때 뷰 트리를 해제하므로 재오픈 때마다
+            // 이 리사이즈가 걸려 크기가 리셋된다. 대입 전후로 프레임을 보존한다.
             let frame = w.frame
             w.contentViewController = NSHostingController(rootView: MacContentView(vm: vm))
             w.setFrame(frame, display: false)
@@ -41,6 +45,9 @@ final class MainWindowController: NSObject, NSWindowDelegate {
         w.isReleasedWhenClosed = false
         w.identifier = NSUserInterfaceItemIdentifier("main")
 
+        // 마지막으로 열렸던 데스크탑으로 끌고 가지 말고, 지금 보고 있는 데스크탑에서 열리게 한다.
+        w.collectionBehavior = [.moveToActiveSpace, .fullScreenPrimary]
+
         // 실행 간 크기·위치 유지. 저장된 프레임이 없을 때만 가운데 정렬.
         w.setFrameAutosaveName("main")
         if !w.setFrameUsingName("main") { w.center() }
@@ -54,14 +61,19 @@ final class MainWindowController: NSObject, NSWindowDelegate {
     }
 
     /// 최소화되거나 다른 창에 완전히 가려지면 배경 애니메이션을 멈춘다.
-
+    /// (macOS 27은 이걸 OS가 대신 해주지 않는다)
     @objc private func occlusionChanged() {
         guard let w = window else { return }
         RenderGate.shared.isActive = w.occlusionState.contains(.visible)
     }
 
-    /// 닫기 → 숨김 + Dock 끔 + SwiftUI 뷰 트리 해제 (창 객체·프레임은 유지)
+    /// 메뉴 막대 아이콘이 꺼져 있으면 창을 닫는 것 = 앱 종료.
+    /// 켜져 있으면 숨김 + Dock 끔 + SwiftUI 뷰 트리 해제 (창 객체·프레임은 유지).
     func windowShouldClose(_ sender: NSWindow) -> Bool {
+        guard MenuBarVisibility.isEnabled else {
+            NSApp.terminate(nil)
+            return false
+        }
         RenderGate.shared.isActive = false
         sender.orderOut(nil)
         sender.contentViewController = nil

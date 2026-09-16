@@ -13,6 +13,9 @@ struct MacContentView: View {
     @State private var showSearch = false
     @State private var showSettings = false
     @State private var launchAtLogin = LaunchAtLogin.isEnabled
+    // MenuBarExtra(isInserted:) 가 이 값을 구독한다. 끄면 메뉴 막대에서 즉시 사라지고,
+    // 그 상태에서 창을 닫으면 MainWindowController 가 앱을 종료한다.
+    @AppStorage(MenuBarVisibility.key) private var showMenuBarExtra = true
 
     var body: some View {
         ZStack {
@@ -110,18 +113,21 @@ struct MacContentView: View {
                     }
                     .buttonStyle(.plain)
                     .popover(isPresented: $showSettings, arrowEdge: .bottom) {
-                        VStack(alignment: .leading, spacing: 0) {
-                            Toggle(isOn: $launchAtLogin) {
-                                Text("시작 시 자동 실행")
-                                    .font(.system(size: 13))
-                            }
-                            .toggleStyle(.switch)
-                            .onChange(of: launchAtLogin) { _, v in
-                                LaunchAtLogin.isEnabled = v
-                            }
-                            .padding(14)
+                        // Toggle 은 제 크기만큼만 차지해서 고정 폭 안에 두면 오른쪽이 비어 보인다.
+                        // 라벨과 스위치를 직접 HStack 으로 벌려 양 끝에 붙인다.
+                        VStack(spacing: 0) {
+                            settingRow("시작 시 자동 실행", isOn: $launchAtLogin)
+                                .onChange(of: launchAtLogin) { _, v in
+                                    LaunchAtLogin.isEnabled = v
+                                }
+
+                            Divider().padding(.horizontal, 14)
+
+                            // @AppStorage 가 UserDefaults 에 바로 쓰고 MenuBarExtra 가 그 값을
+                            // 구독하므로 onChange 가 필요 없다.
+                            settingRow("메뉴 막대에 표시", isOn: $showMenuBarExtra)
                         }
-                        .frame(width: 220)
+                        .frame(width: 240)
                     }
                 }
                 .padding(.horizontal, 18).padding(.top, 14)
@@ -136,6 +142,19 @@ struct MacContentView: View {
                           onCancel: { showSearch = false })
         }
     }
+    private func settingRow(_ title: String, isOn: Binding<Bool>) -> some View {
+        HStack(spacing: 12) {
+            Text(title).font(.system(size: 13))
+            Spacer(minLength: 0)
+            Toggle("", isOn: isOn)
+                .labelsHidden()
+                .toggleStyle(.switch)
+                .controlSize(.small)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+    }
+
     private func footer(_ d: StargazingData) -> String {
         var s = d.location.name
         if let a = d.location.admin1 { s += " · \(a)" }
